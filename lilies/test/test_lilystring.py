@@ -20,7 +20,9 @@ class TestLilyString(unittest.TestCase):
         self.colors = ['red', 'red on white', 'black on red', 'cyan on blue', 'yellow on yellow',
                        'default on default', 'default', 'gray on black', 'magenta on cyan',
                        'green on green', 'cyan on magenta', '', 'dark red', 'dark blue on black',
-                        'dark yellow on green', 'dark cyan', 'dark magenta', 'dark green']
+                        'dark yellow on green', 'dark cyan', 'dark magenta', 'dark green',
+                        'bright magenta', 'bright red', 'bright blue', 'bright green', 'bright cyan',
+                        'bright yellow'] 
     
     def test_integer_casting(self):
         for i in self.integers:

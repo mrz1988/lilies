@@ -15,6 +15,12 @@ class ColoramaDisabled(object):
         reinit()
 
 foreground_colors = {
+    'bright red'     : Fore.RED + Style.BRIGHT,
+    'bright blue'    : Fore.BLUE + Style.BRIGHT,
+    'bright green'   : Fore.GREEN + Style.BRIGHT,
+    'bright cyan'    : Fore.CYAN + Style.BRIGHT,
+    'bright yellow'  : Fore.YELLOW + Style.BRIGHT,
+    'bright magenta' : Fore.MAGENTA + Style.BRIGHT,
     'red'    : Fore.RED + bright,
     'blue'   : Fore.BLUE + bright,
     'green'  : Fore.GREEN + bright,
