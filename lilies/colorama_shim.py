@@ -1,5 +1,8 @@
 from .packages.colorama import init, Fore, Back, Style
 from .packages.colorama.initialise import deinit, reinit
+import platform
+
+bright = Style.BRIGHT if 'Windows' in platform.system() else ''
 
 class ColoramaDisabled(object):
     def __init__(self):
@@ -12,14 +15,14 @@ class ColoramaDisabled(object):
         reinit()
 
 foreground_colors = {
-    'red'    : Fore.RED + Style.BRIGHT,
-    'blue'   : Fore.BLUE + Style.BRIGHT,
-    'green'  : Fore.GREEN + Style.BRIGHT,
-    'cyan'   : Fore.CYAN + Style.BRIGHT,
-    'yellow' : Fore.YELLOW + Style.BRIGHT,
-    'magenta': Fore.MAGENTA + Style.BRIGHT,
-    'white'  : Fore.WHITE + Style.BRIGHT,
-    'gray'   : Fore.BLACK + Style.BRIGHT,
+    'red'    : Fore.RED + bright,
+    'blue'   : Fore.BLUE + bright,
+    'green'  : Fore.GREEN + bright,
+    'cyan'   : Fore.CYAN + bright,
+    'yellow' : Fore.YELLOW + bright,
+    'magenta': Fore.MAGENTA + bright,
+    'white'  : Fore.WHITE + bright,
+    'gray'   : Fore.BLACK + bright,
     'black'  : Fore.BLACK + Style.DIM,
     'dark red'     : Fore.RED + Style.DIM,
     'dark blue'    : Fore.BLUE + Style.DIM,
