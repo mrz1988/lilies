@@ -93,12 +93,10 @@ class VertBox(BorderedContainer):
                self._border.get_right_width()
 
     def render(self):
-        print "two"
         width = self.get_min_width()
         output = self._border.render_top(width)
         for c in self._components:
             output += self._border.wrap_lines(c.render(), width)
             #output += self._separator.horiz(_border)
         output += self._border.render_bottom(width)
-        print "three"
         return output

@@ -78,7 +78,6 @@ UNI_TO_ASCII = {
 }
 
 def wilt(s):
-    print("four")
     if isinstance(s, LilyString):
         return s.u_plain()
     else:
