@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-# pretty.py (v0.0.1)
+# Lilies
 # By: Matt Zychowski (copyright 2014)
-# License: MIT
-# 
+#
 # A library wrapped around colorama for using colored strings in the terminal
 # window.  Provides advanced manipulation of colored strings, including accurate
 # slicing.
 #
-# Compatible with Python 2.7 (and probably 3.1?)
 ################################################################################
 
 from __future__ import print_function
@@ -17,6 +15,7 @@ from copy import deepcopy
 import os
 import sys
 import re
+import types
 
 from .abstractions import Drawable
 from .colorama_shim import match_code as MATCH
@@ -24,58 +23,39 @@ from .colorama_shim import reset_code as RESET
 from .colors import TextColor
 
 #Python 3 compatibility
-if sys.version_info >= (3, 0):
+IS_PY3 = sys.version_info >= (3, 0)
+if IS_PY3:
     unicode = str
-    IS_PY3 = True
-else:
-    IS_PY3 = False
 
 
-SAMPLE1 = u'hello there! ☃?☃'
-SAMPLE2 = 'hello there! ☃?☃'
-SAMPLE3 = u'┌────q─────h☃ello───────────ds───┐'
-TOTS = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
-        'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
-        'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty-one',
-        'twenty-two', 'twenty-three', 'twenty-four', 'twenty-five',
-        'twenty-six', 'twenty-seven', 'twenty-eight', 'twenty-nine', 'thirty',
-        'thirty-one', 'thirty-two', 'thirty-three', 'thirty-four',
-        'thirty-five', 'thirty-six', 'thirty-seven', 'thirty-eight',
-        'thirty-nine', 'forty', 'forty-one', 'forty-two', 'forty-three',
-        'forty-four', 'forty-five', 'forty-six', 'forty-seven', 'forty-eight',
-        'forty-nine', 'fifty', 'fifty-one', 'fifty-two', 'fifty-three']
-
-# Mapping dictionary for unicode -> cp437.
-# This can all be found at: http://en.wikipedia.org/wiki/Code_page_437
-# We map chars 128-254 (255 is nbsp which we don't currently care about.)
-# Some of the other control codes might be mapped eventually, since some of them
-# are actually used to print cool characters in the windows DOS console.
+# Mapping dictionary for unicode -> ascii.
 UNI_TO_ASCII = {
-    u'\u00c7' : 'C', u'\u00fc' : 'u', u'\u00e9' : 'e', u'\u00e2' : 'a',
-    u'\u00e4' : 'a', u'\u00e0' : 'a', u'\u00e5' : 'a', u'\u00e7' : 'c',
-    u'\u00ea' : 'e', u'\u00eb' : 'e', u'\u00e8' : 'e', u'\u00ef' : 'i',
-    u'\u00ee' : 'i', u'\u00ec' : 'i', u'\u00c4' : 'A', u'\u00c5' : 'A',
-    u'\u00c9' : 'E', u'\u00e6' : 'a', u'\u00c6' : 'A', u'\u00f4' : 'o',
-    u'\u00f6' : 'o', u'\u00f2' : 'o', u'\u00fb' : 'u', u'\u00f9' : 'u',
-    u'\u00ff' : 'y', u'\u00d6' : 'O', u'\u00dc' : 'U', u'\u00a2' : 'c',
-    u'\u00a3' : 'p', u'\u00a5' : 'Y', u'\u20a7' : 'P', u'\u0192' : 'f',
-    u'\u00e1' : 'a', u'\u00ed' : 'i', u'\u00f3' : 'o', u'\u00fa' : 'u',
-    u'\u00f1' : 'n', u'\u00d1' : 'N', u'\u00aa' : '*', u'\u00ba' : '*',
-    u'\u00bf' : '?', u'\u2310' : '~', u'\u00ac' : '~', u'\u00a1' : 'i',
-    u'\u00ab' : '<', u'\u00bb' : '>', u'\u2591' : ' ', u'\u2592' : '#',
-    u'\u2593' : '#', u'\u2502' : '|', u'\u2524' : '|', u'\u2561' : '|',
-    u'\u2562' : '|', u'\u2556' : ' ', u'\u2555' : ' ', u'\u2563' : '|',
-    u'\u2551' : '|', u'\u2557' : ' ', u'\u255d' : ' ', u'\u255c' : ' ',
-    u'\u255b' : ' ', u'\u2510' : ' ', u'\u2514' : ' ', u'\u2534' : '-',
-    u'\u252c' : '-', u'\u251c' : '|', u'\u2500' : '-', u'\u253c' : '+',
-    u'\u255e' : '|', u'\u255f' : '|', u'\u255a' : ' ', u'\u2554' : ' ',
-    u'\u2569' : '=', u'\u2566' : '=', u'\u2560' : '|', u'\u2550' : '=',
-    u'\u256c' : '=', u'\u2567' : '=', u'\u2568' : '-', u'\u2564' : '=',
-    u'\u2565' : '-', u'\u2559' : ' ', u'\u2558' : ' ', u'\u2552' : ' ',
-    u'\u2553' : ' ', u'\u256b' : '+', u'\u256a' : '=', u'\u2518' : ' ',
-    u'\u250c' : ' ', u'\u2588' : "*", u'\u2584' : "*", u'\u258c' : "*",
-    u'\u2590' : "*", u'\u2580' : "*", u'\u25a0' : "*",
+    u'\u00c7': 'C', u'\u00fc': 'u', u'\u00e9': 'e', u'\u00e2': 'a',
+    u'\u00e4': 'a', u'\u00e0': 'a', u'\u00e5': 'a', u'\u00e7': 'c',
+    u'\u00ea': 'e', u'\u00eb': 'e', u'\u00e8': 'e', u'\u00ef': 'i',
+    u'\u00ee': 'i', u'\u00ec': 'i', u'\u00c4': 'A', u'\u00c5': 'A',
+    u'\u00c9': 'E', u'\u00e6': 'a', u'\u00c6': 'A', u'\u00f4': 'o',
+    u'\u00f6': 'o', u'\u00f2': 'o', u'\u00fb': 'u', u'\u00f9': 'u',
+    u'\u00ff': 'y', u'\u00d6': 'O', u'\u00dc': 'U', u'\u00a2': 'c',
+    u'\u00a3': 'p', u'\u00a5': 'Y', u'\u20a7': 'P', u'\u0192': 'f',
+    u'\u00e1': 'a', u'\u00ed': 'i', u'\u00f3': 'o', u'\u00fa': 'u',
+    u'\u00f1': 'n', u'\u00d1': 'N', u'\u00aa': '*', u'\u00ba': '*',
+    u'\u00bf': '?', u'\u2310': '~', u'\u00ac': '~', u'\u00a1': 'i',
+    u'\u00ab': '<', u'\u00bb': '>', u'\u2591': ' ', u'\u2592': '#',
+    u'\u2593': '#', u'\u2502': '|', u'\u2524': '|', u'\u2561': '|',
+    u'\u2562': '|', u'\u2556': ' ', u'\u2555': ' ', u'\u2563': '|',
+    u'\u2551': '|', u'\u2557': ' ', u'\u255d': ' ', u'\u255c': ' ',
+    u'\u255b': ' ', u'\u2510': ' ', u'\u2514': ' ', u'\u2534': '-',
+    u'\u252c': '-', u'\u251c': '|', u'\u2500': '-', u'\u253c': '+',
+    u'\u255e': '|', u'\u255f': '|', u'\u255a': ' ', u'\u2554': ' ',
+    u'\u2569': '=', u'\u2566': '=', u'\u2560': '|', u'\u2550': '=',
+    u'\u256c': '=', u'\u2567': '=', u'\u2568': '-', u'\u2564': '=',
+    u'\u2565': '-', u'\u2559': ' ', u'\u2558': ' ', u'\u2552': ' ',
+    u'\u2553': ' ', u'\u256b': '+', u'\u256a': '=', u'\u2518': ' ',
+    u'\u250c': ' ', u'\u2588': "*", u'\u2584': "*", u'\u258c': "*",
+    u'\u2590': "*", u'\u2580': "*", u'\u25a0': "*",
 }
+
 
 def wilt(s):
     if isinstance(s, LilyString):
@@ -83,11 +63,17 @@ def wilt(s):
     else:
         return unicode(s)
 
+
 def grow(s, *args, **kwargs):
     if isinstance(s, LilyString):
         return s
     else:
         return LilyString(s, *args, **kwargs)
+
+
+def isstringish(obj):
+    return isinstance(obj, types.StringTypes) or isinstance(obj, LilyString)
+
 
 class LilyString(Drawable):
     def __init__(self, s='', color_str=''):
@@ -110,7 +96,7 @@ class LilyString(Drawable):
         return sb
 
     def __repr__(self):
-        return "'" + self.__str__() + "'"
+        return "c'" + self.__str__() + "'"
 
     def __len__(self):
         return sum(map(len, self._pieces))
@@ -128,7 +114,7 @@ class LilyString(Drawable):
         if isinstance(key, slice):
             slice_obj = key
         elif isinstance(key, int):
-            slice_obj = slice(key, key+1, None)
+            slice_obj = slice(key, key + 1, None)
         else:
             raise TypeError("Invalid argument type")
 
@@ -178,6 +164,27 @@ class LilyString(Drawable):
         self._pieces *= other
         return self
 
+    def __gt__(self, other):
+        return self.u_plain() > other
+
+    def __lt__(self, other):
+        return self.u_plain() < other
+
+    def __ge__(self, other):
+        return self.u_plain() >= other
+
+    def __le__(self, other):
+        return self.u_plain() <= other
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.__str__())
+
     def u_plain(self):
         sb = u''
         for piece in self._pieces:
@@ -208,8 +215,10 @@ class LilyString(Drawable):
     def _expand(self, width, justify, fillchar, l_fill_clr=MATCH,
                 r_fill_clr=MATCH):
         fillchar = self._check_fillchar(fillchar)
-        left_color = self._match_and_validate_color(l_fill_clr, 0)   #0 is leftmost char
-        right_color = self._match_and_validate_color(r_fill_clr, -1) #-1 is rightmost char
+        left_color = self._match_and_validate_color(l_fill_clr,
+                                                    0)   #0 is leftmost char
+        right_color = self._match_and_validate_color(r_fill_clr,
+                                                     -1) #-1 is rightmost char
         cur_len = self.__len__()
         if cur_len == width:
             return deepcopy(self)
@@ -268,14 +277,14 @@ class LilyString(Drawable):
         _new = deepcopy(self)
         trim_to_length = length - len(elipsis) if add_elipsis else length
         if trim_to_length < 1:
-            raise PrettyPrinterError("Truncating string would " +\
+            raise PrettyPrinterError("Truncating string would " + \
                                      "make it too short")
 
         total = 0
         for i in range(len(_new._pieces)):
             total += len(_new._pieces[i].text)
             if total >= trim_to_length:
-                _new._pieces = _new._pieces[:i+1]
+                _new._pieces = _new._pieces[:i + 1]
                 break
 
         if total > trim_to_length:
@@ -285,7 +294,8 @@ class LilyString(Drawable):
             return _new
 
         # add elipsis
-        color = self._match_and_validate_color(elipsis_clr, -1) #-1 is rightmost char
+        color = self._match_and_validate_color(elipsis_clr,
+                                               -1) #-1 is rightmost char
         return _new + LilyString(elipsis, color)
 
     def _flatten(self):
@@ -310,6 +320,9 @@ class LilyString(Drawable):
         _new._flatten()
         return _new
 
+    def color_char(self, index, *args, **kwargs):
+        return self.color_chars([index], *args, **kwargs)
+
     def color_chars(self, indices, color_str=''):
         chars = self.u_plain()
         ixs = sorted(indices)
@@ -320,7 +333,7 @@ class LilyString(Drawable):
                 break
             _new += self[last_index:i]
             _new += LilyString(chars[i], color_str)
-            last_index = i+1
+            last_index = i + 1
         _new += self[last_index:]
         _new._flatten()
         return _new
@@ -351,7 +364,9 @@ class LilyString(Drawable):
 
     def join(self, components):
         if len(components) <= 1:
-            return components
+            if isstringish(components):
+                return grow(components)
+            return grow(components[0])
         new_comps = components[0]
         _copy = deepcopy(self)
         for i in range(1, len(components)):
@@ -437,6 +452,7 @@ class LilyString(Drawable):
     def render(self):
         return [self]
 
+
 class LilyStringPiece(object):
     def __init__(self, s, color):
         try:
@@ -479,16 +495,19 @@ class LilyStringPiece(object):
                     fulls += UNI_TO_ASCII[self.text[i]]
                     last_bad = i + 1
             if last_bad != len(self.text):
-                fulls += self.text[last_bad : len(self.text)].encode('ascii',
-                                                                     'replace')
+                fulls += self.text[last_bad: len(self.text)].encode('ascii',
+                                                                    'replace')
             return fulls
         else:
             return self.text.encode(sys.stdout.encoding, 'replace')
 
+
 class PrettyPrinterError(Exception):
     pass
 
+
 class InvalidInputError(Exception):
     pass
+
 
 endl = LilyString(os.linesep)
