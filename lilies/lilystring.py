@@ -78,8 +78,8 @@ def isstringish(obj):
 class LilyString(Drawable):
     def __init__(self, s='', color_str=''):
         self._pieces = []
-        self.append(s, color_str)
-        self.add = self.append
+        self._append(s, color_str)
+        self.add = self._append
 
     def __str__(self):
         if IS_PY3:
@@ -133,8 +133,8 @@ class LilyString(Drawable):
             new_pretty._pieces = newpieces
         except AttributeError:
             new_pretty._pieces = deepcopy(self._pieces)
-            new_pretty.append(other)
-
+            new_pretty._append(other)
+        new_pretty._flatten()
         return new_pretty
 
     def __radd__(self, other):
@@ -147,6 +147,7 @@ class LilyString(Drawable):
         newpieces = self._pieces * other
         new_pretty = LilyString()
         new_pretty._pieces = newpieces
+        new_pretty._flatten()
         return new_pretty
 
     def __rmul__(self, other):
@@ -156,12 +157,13 @@ class LilyString(Drawable):
         try:
             self._pieces += other._pieces
         except AttributeError:
-            self.append(other)
-
+            self._append(other)
+        self._flatten()
         return self
 
     def __imul__(self, other):
         self._pieces *= other
+        self._flatten()
         return self
 
     def __gt__(self, other):
@@ -277,7 +279,7 @@ class LilyString(Drawable):
         _new = deepcopy(self)
         trim_to_length = length - len(elipsis) if add_elipsis else length
         if trim_to_length < 1:
-            raise PrettyPrinterError("Truncating string would " + \
+            raise LilyStringError("Truncating string would " + \
                                      "make it too short")
 
         total = 0
@@ -351,7 +353,7 @@ class LilyString(Drawable):
             ixs += list(range(group.start(), group.end()))
         return self.color_chars(ixs, color_str)
 
-    def append(self, s, color_str=''):
+    def _append(self, s, color_str=''):
         if s == '':
             return
         self._pieces.append(LilyStringPiece(s, TextColor(color_str)))
@@ -373,6 +375,38 @@ class LilyString(Drawable):
             new_comps += _copy + components[i]
         return new_comps
 
+    def split(self, sep=None, maxsplit=-1):
+        if isinstance(sep, LilyString):
+            sep = wilt(sep)
+        split_pieces = []
+        # Split each string piece individually, storing resulting LilyString
+        #   sets in split_pieces
+        for piece in self._pieces:
+            split_piece = piece.text.split(sep)
+            piece_color = piece.get_color()
+            if maxsplit != -1:
+                #TODO: bail earlier on this rather than re-splitting everything
+                prev_splits = sum(map(lambda p: len(p) - 1, split_pieces))
+                tot_splits = len(split_piece) + prev_splits - 1
+                if tot_splits > maxsplit:
+                    split_times = maxsplit - prev_splits
+                    split_piece = piece.text.split(sep, split_times)
+
+            split_piece = map(lambda p: grow(p, piece_color), split_piece)
+            split_pieces.append(split_piece)
+
+        if len(split_pieces) == 0:
+            return [grow('')]
+
+        output = split_pieces[0]
+        for i in range(1, len(split_pieces)):
+            # join together outside components (for output components that span
+            #   multiple pieces)
+            output[-1] += split_pieces[i][0]
+            # add the rest of the pieces
+            output += split_pieces[i][1:]
+        return output
+
     def find(self, s, start=None, end=None):
         s = wilt(s)
         return self.u_plain().find(s, start, end)
@@ -391,6 +425,12 @@ class LilyString(Drawable):
         _new = deepcopy(self)
         for i in range(len(self._pieces)):
             _new._pieces[i].text = _new._pieces[i].text.upper()
+        return _new
+
+    def swapcase(self):
+        _new = deepcopy(self)
+        for i in range(len(self._pieces)):
+            _new._pieces[i].text = _new._pieces[i].text.swapcase()
         return _new
 
     def lstrip(self, chars=None):
@@ -412,6 +452,7 @@ class LilyString(Drawable):
             _new._pieces[i].text = _new._pieces[i].text.rstrip(chars)
             if len(_new._pieces[i]) > 0:
                 break
+        _new._flatten()
         return _new
 
     def strip(self, chars=None):
@@ -425,6 +466,9 @@ class LilyString(Drawable):
 
     def endswith(self, suffix, *args, **kwargs):
         return self.u_plain().endswith(wilt(suffix), *args, **kwargs)
+
+    def isalnum(self):
+        return self.u_plain().isalnum()
 
     def isalpha(self):
         return self.u_plain().isalpha()
@@ -440,6 +484,9 @@ class LilyString(Drawable):
 
     def istitle(self):
         return self.u_plain().istitle()
+
+    def isupper(self):
+        return self.u_plain().isupper()
 
     def get_color(self):
         if len(self._pieces) == 0:
@@ -526,7 +573,7 @@ class LilyStringPiece(object):
             return self.text.encode(sys.stdout.encoding, 'replace')
 
 
-class PrettyPrinterError(Exception):
+class LilyStringError(Exception):
     pass
 
 
