@@ -417,6 +417,30 @@ class LilyString(Drawable):
     def strip(self, chars=None):
         return self.lstrip(chars).rstrip(chars)
 
+    def count(self, sub, *args, **kwargs):
+        return self.u_plain().count(wilt(sub), *args, **kwargs)
+
+    def startswith(self, prefix, *args, **kwargs):
+        return self.u_plain().startswith(wilt(prefix), *args, **kwargs)
+
+    def endswith(self, suffix, *args, **kwargs):
+        return self.u_plain().endswith(wilt(suffix), *args, **kwargs)
+
+    def isalpha(self):
+        return self.u_plain().isalpha()
+
+    def isdigit(self):
+        return self.u_plain().isdigit()
+
+    def islower(self):
+        return self.u_plain().islower()
+
+    def isspace(self):
+        return self.u_plain().isspace()
+
+    def istitle(self):
+        return self.u_plain().istitle()
+
     def get_color(self):
         if len(self._pieces) == 0:
             return TextColor().name
