@@ -200,10 +200,10 @@ class LilyString(Drawable):
         return sb
 
     def is_text(self, text):
-        return self.u_plain() == text
+        return self.u_plain() == wilt(text)
 
     def isnt_text(self, text):
-        return self.u_plain() != text
+        return self.u_plain() != wilt(text)
 
     def resize(self, size, justify='left', fillchar=' ',
                l_fill_clr=MATCH, r_fill_clr=MATCH, add_elipsis=False,
