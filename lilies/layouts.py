@@ -10,7 +10,8 @@ def sortify(iter, case_insensitive=True):
     return sorted(list(iter), key=sortkey)
 
 
-def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3):
+def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3,
+              left_to_right=False):
     iter = map(grow, iter)
     if (sort):
         iter = sortify(iter)
@@ -32,10 +33,17 @@ def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3):
         entries_per_column += 1 
 
     groups = []
-    for i in range(entries_per_column):
-        start = cols * i
-        stop = start + cols
-        groups.append(resized[start:stop])
+    if left_to_right:
+        # items populate left to right, then wrap to next row
+        for i in range(entries_per_column):
+            start = cols * i
+            stop = start + cols
+            groups.append(resized[start:stop])
+    else:
+        # items populate top to bottom, then wrap to next column
+        # min is used here to avoid empty groups
+        for i in range(min(cols, len(resized))):
+            groups.append(resized[i::cols])
     
     output = ''
     for group in groups:
