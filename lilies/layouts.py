@@ -18,6 +18,7 @@ def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3,
 
     if cols == 0:
         cols = width // (max(map(len, iter)) + spacing)
+        cols = min(len(iter), cols)
         if cols == 0:
             cols = 1
     if cols == 0:
@@ -42,8 +43,8 @@ def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3,
     else:
         # items populate top to bottom, then wrap to next column
         # min is used here to avoid empty groups
-        for i in range(min(cols, len(resized))):
-            groups.append(resized[i::cols])
+        for i in range(entries_per_column):
+            groups.append(resized[i::entries_per_column])
     
     output = ''
     for group in groups:
