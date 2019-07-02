@@ -9,8 +9,7 @@ In addition to a very simple API, Lilies provides colored strings and associated
 For now, Lilies is not on PIP, as it is still in beta and working on some cleanup. It may be unreliable in Python 3.x, and is poorly unit tested. To install locally:
 ```
 git clone https://github.com/mrz1988/lilies.git
-cd lilies
-python setup.py install
+easy_install ./lilies
 ```
 Lilies provides a single basic function convert your standard Python strings into colored `LilyString` objects: `grow()`. This can be used like this:
 

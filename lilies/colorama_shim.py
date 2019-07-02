@@ -1,5 +1,5 @@
-from .packages.colorama import init, Fore, Back, Style
-from .packages.colorama.initialise import deinit, reinit
+from colorama import init, Fore, Back, Style
+from colorama.initialise import deinit, reinit
 import platform
 
 bright = Style.BRIGHT if 'Windows' in platform.system() else ''
