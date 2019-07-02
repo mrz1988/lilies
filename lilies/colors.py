@@ -1,4 +1,5 @@
-from colorama_shim import foreground_colors, background_colors
+from __future__ import absolute_import
+from .colorama_shim import foreground_colors, background_colors
 
 class TextColor(object):
     def __init__(self, colorstring=''):

@@ -71,7 +71,7 @@ def grow(s, *args, **kwargs):
 
 
 def isstringish(obj):
-    return isinstance(obj, types.StringTypes) or isinstance(obj, LilyString)
+    return isinstance(obj, (str,)) or isinstance(obj, LilyString)
 
 
 def assert_stringish(obj):
