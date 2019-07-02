@@ -1,8 +1,18 @@
+import platform
 from colorama import init, Fore, Back, Style
 from colorama.initialise import deinit, reinit
-import platform
+
 
 bright = Style.BRIGHT if 'Windows' in platform.system() else ''
+
+
+def on_start():
+  init()
+
+
+def on_exit():
+  deinit()
+
 
 class ColoramaDisabled(object):
     def __init__(self):
@@ -52,5 +62,4 @@ background_colors = {
 }
 match_code = 'match'
 reset_code = Style.RESET_ALL
-init()
 no_colorama = ColoramaDisabled()
