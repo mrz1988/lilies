@@ -2,3 +2,5 @@
 .idea/*
 build/*
 .vscode/*
+.DS_Store
+lilies.egg-info/*
