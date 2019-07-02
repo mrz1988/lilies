@@ -27,7 +27,6 @@ IS_PY3 = sys.version_info >= (3, 0)
 if IS_PY3:
     unicode = str
 
-
 # Mapping dictionary for unicode -> ascii.
 UNI_TO_ASCII = {
     u'\u00c7': 'C', u'\u00fc': 'u', u'\u00e9': 'e', u'\u00e2': 'a',
@@ -73,6 +72,11 @@ def grow(s, *args, **kwargs):
 
 def isstringish(obj):
     return isinstance(obj, types.StringTypes) or isinstance(obj, LilyString)
+
+
+def assert_stringish(obj):
+    if not isstringish(obj):
+        raise TypeError("Expected something string-like: " + repr(obj))
 
 
 class LilyString(Drawable):
