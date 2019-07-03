@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from lilies.lilystring import grow, wilt
-from lilies.lilystring import PrettyPrinterError, InvalidInputError
+from lilies.lilystring import LilyStringError, InvalidInputError
 import unittest
 import math
 import sys
@@ -210,7 +210,7 @@ class TestLilyString(unittest.TestCase):
             p_one.resize(10, elipsis_clr='garbage', add_elipsis=True)
         
         # test making too short causes error
-        with self.assertRaises(PrettyPrinterError):
+        with self.assertRaises(LilyStringError):
             p_one.resize(1, add_elipsis=True)
         
     def test_iter(self):

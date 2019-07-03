@@ -305,17 +305,21 @@ class LilyString(Drawable):
         return _new + LilyString(elipsis, color)
 
     def _flatten(self):
-        if len(self._pieces) == 0:
+        piece_length = len(self._pieces)
+        if piece_length == 0:
             return
-        _newpieces = [self._pieces[0]]
-        for i in range(1, len(self._pieces)):
+        newpieces = []
+        for i in range(piece_length):
             if len(self._pieces[i]) == 0:
                 continue
-            if self._pieces[i].color == _newpieces[-1].color:
-                _newpieces[-1].text += self._pieces[i].text
+            if len(newpieces) == 0:
+                newpieces.append(deepcopy(self._pieces[i]))
+                continue
+            if self._pieces[i].color == newpieces[-1].color:
+                newpieces[-1].text += self._pieces[i].text
             else:
-                _newpieces.append(self._pieces[i])
-        self._pieces = _newpieces
+                newpieces.append(deepcopy(self._pieces[i]))
+        self._pieces = newpieces
 
     def _getslice(self, sliceobj):
         chars = self.u_plain()
