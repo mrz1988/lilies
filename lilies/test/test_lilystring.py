@@ -292,6 +292,26 @@ class TestLilyString(unittest.TestCase):
         s._flatten()
         self.assertEqual(0, len(s._pieces))
 
+    def test_flatten_combines_colors(self):
+        s = grow('hello', 'blue')
+        s._append('world', 'blue')
+        s._append('!', 'blue')
+        self.assertEqual(3, len(s._pieces))
+        len_before = len(s)
+        s._flatten()
+        self.assertEqual(1, len(s._pieces))
+        self.assertEqual(len_before, len(s))
+
+    def test_flatten_does_not_combine_unlike_colors(self):
+        s = grow('hello', 'green')
+        s._append('world', 'blue')
+        s._append('!', 'green')
+        self.assertEqual(3, len(s._pieces))
+        len_before = len(s)
+        s._flatten()
+        self.assertEqual(3, len(s._pieces))
+        self.assertEqual(len_before, len(s))
+
     def test_split_comma(self):
         for s in self.strings:
             p = grow(s, 'red')
@@ -344,5 +364,10 @@ class TestLilyString(unittest.TestCase):
         self.assertEqual(control1, wilt(test1))
         self.assertEqual(control2, wilt(test2))
 
-if __name__ == '__main__':
+
+def main():
     unittest.main()
+
+
+if __name__ == '__main__':
+    main()

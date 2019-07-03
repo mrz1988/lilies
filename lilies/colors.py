@@ -9,6 +9,15 @@ class TextColor(object):
             self.name = colorstring
         self.ansi = self.parse_color(colorstring)
 
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.ansi)
+
     @staticmethod
     def parse_color(colorstring):
         fore = ''

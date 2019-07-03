@@ -1,14 +1,5 @@
 # -*- coding: utf-8 -*-
 
-################################################################################
-# Lilies
-# By: Matt Zychowski (copyright 2014)
-#
-# A library wrapped around colorama for using colored strings in the terminal
-# window.  Provides advanced manipulation of colored strings, including accurate
-# slicing.
-#
-################################################################################
 
 from __future__ import print_function
 from copy import deepcopy
