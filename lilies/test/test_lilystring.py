@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from lilies.lilystring import grow, wilt
-from lilies.lilystring import LilyStringError, InvalidInputError, LilyStringPiece
+from builtins import str
+from builtins import range
 import unittest
 import math
 import sys
+from ..lilystring import grow, wilt
+from ..lilystring import LilyStringError, InvalidInputError, LilyStringPiece
 
 if sys.version_info > (3, 0):
     long = int
@@ -25,9 +27,9 @@ class TestLilyString(unittest.TestCase):
                         'comma,separated,values'
                         'trailing,comma,'
                         ',']
-        self.longs = [long(123456754382390234),
-                      long(3482713498573234),
-                      long(-234897123123497999000)]
+        self.longs = [int(123456754382390234),
+                      int(3482713498573234),
+                      int(-234897123123497999000)]
         self.colors = ['red', 'red on white', 'black on red', 'cyan on blue', 'yellow on yellow',
                        'default on default', 'default', 'gray on black', 'magenta on cyan',
                        'green on green', 'cyan on magenta', '', 'dark red', 'dark blue on black',
@@ -70,13 +72,13 @@ class TestLilyString(unittest.TestCase):
 
     def test_long_casting(self):
         for lg in self.longs:
-            self.assertEqual(lg, long(grow(lg)))
-            self.assertEqual(lg, long(grow(lg, 'red')))
+            self.assertEqual(lg, int(grow(lg)))
+            self.assertEqual(lg, int(grow(lg, 'red')))
 
             as_string = str(lg)
             if len(as_string) > 1:
                 multicolor = grow(as_string[0], 'cyan') + grow(as_string[1:], 'white')
-                self.assertEqual(lg, long(multicolor))
+                self.assertEqual(lg, int(multicolor))
 
     def test_length(self):
         for s in self.strings:
@@ -109,7 +111,7 @@ class TestLilyString(unittest.TestCase):
             p = grow(s, 'blue')
             self.assertEqual(s * 0, wilt(p * 0))
             self.assertEqual(s * 3, wilt(p * 3))
-            self.assertEqual(s * long(5), wilt(p * long(5)))
+            self.assertEqual(s * int(5), wilt(p * int(5)))
 
             with self.assertRaises(TypeError):
                 p *= 1.4

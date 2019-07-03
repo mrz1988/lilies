@@ -9,6 +9,7 @@
 ################################################################################
 
 from __future__ import print_function
+from builtins import str
 from . import grow, __version__
 from .test import test_all
 

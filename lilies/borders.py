@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from builtins import range
+from builtins import object
 from .colors import TextColor
 from .lilystring import grow
 
@@ -107,7 +109,7 @@ class ComplexBorderStyle(object):
         return border + self.wrap_lines(padding, ctrwidth)
 
     def wrap_lines(self, lines, width, justify='left'):
-        return list(map(lambda l: self.wrap_line(l, width, justify), lines))
+        return list([self.wrap_line(l, width, justify) for l in lines])
 
     def wrap_line(self, line, width, justify='left'):
         cwidth = width - self.get_total_width()

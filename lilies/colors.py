@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from builtins import range
+from builtins import object
 from .colorama_shim import foreground_colors, background_colors
 
 class TextColor(object):

@@ -1,9 +1,9 @@
+from builtins import object
 import os
 from abc import ABCMeta, abstractmethod
+from future.utils import with_metaclass
 
-class Drawable(object):
-    __metaclass__ = ABCMeta
-
+class Drawable(with_metaclass(ABCMeta, object)):
     @abstractmethod
     def get_min_height(self):
         raise NotImplementedError()

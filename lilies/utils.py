@@ -1,4 +1,6 @@
 from __future__ import print_function
+from builtins import map
+from builtins import range
 from .lilystring import grow, wilt
 
 
@@ -12,12 +14,12 @@ def sortify(iter, case_insensitive=True):
 
 def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3,
               left_to_right=False):
-    iter = map(grow, iter)
+    iter = list(map(grow, iter))
     if (sort):
         iter = sortify(iter)
 
     if cols == 0:
-        cols = width // (max(map(len, iter)) + spacing)
+        cols = width // (max(list(map(len, iter))) + spacing)
         cols = min(len(iter), cols)
         if cols == 0:
             cols = 1
@@ -57,12 +59,9 @@ def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3,
 
 
 def _resize_all(iter, size, justify):
-    return map(
-        lambda s: s.resize(
+    return [s.resize(
             size,
             justify,
             add_elipsis=True,
             fillchar=' '
-        ),
-        iter
-    )
+        ) for s in iter]

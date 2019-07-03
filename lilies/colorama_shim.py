@@ -1,3 +1,4 @@
+from builtins import object
 import platform
 from colorama import init, Fore, Back, Style
 from colorama.initialise import deinit, reinit

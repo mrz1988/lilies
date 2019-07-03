@@ -1,3 +1,6 @@
+from builtins import map
+from builtins import zip
+from builtins import range
 import os
 from .abstractions import Drawable, test_is_lily_obj
 from .lilystring import grow
@@ -16,7 +19,7 @@ class BorderedContainer(Drawable):
         return os.linesep.join(map(str, self.render()))
 
     def __unicode__(self):
-        return os.linesep.join(map(unicode, self.render()))
+        return os.linesep.join(map(str, self.render()))
 
     def add_before(self, container):
         test_is_lily_obj(container)
@@ -61,7 +64,7 @@ class HorizBox(BorderedContainer):
         comp_lines = []
         for c in self._components:
             comp_lines.append(c.render())
-        inner_height = max(map(len, comp_lines))
+        inner_height = max(list(map(len, comp_lines)))
         for i in range(len(comp_lines)):
             ln_width = len(comp_lines[i][0])
             extra_lines = [grow(' ' * ln_width)\
@@ -71,7 +74,7 @@ class HorizBox(BorderedContainer):
         for ln in comp_lines:
             assert(len(ln) == inner_height)
 
-        rows = list(map(self._mkline, zip(*comp_lines)))
+        rows = list(map(self._mkline, list(zip(*comp_lines))))
         rows = self._border.wrap_lines(rows, width)
         output += rows
         output += self._border.render_bottom(width)

@@ -2,6 +2,10 @@
 
 
 from __future__ import print_function
+from builtins import map
+from builtins import str
+from builtins import range
+from builtins import object
 from copy import deepcopy
 import os
 import sys
@@ -16,7 +20,7 @@ from .colors import TextColor
 #Python 3 compatibility
 IS_PY3 = sys.version_info >= (3, 0)
 if IS_PY3:
-    unicode = str
+    str = str
 
 # Mapping dictionary for unicode -> ascii.
 UNI_TO_ASCII = {
@@ -51,7 +55,7 @@ def wilt(s):
     if isinstance(s, LilyString):
         return s.u_plain()
     else:
-        return unicode(s)
+        return str(s)
 
 
 def grow(s, *args, **kwargs):
@@ -87,7 +91,7 @@ class LilyString(Drawable):
     def __unicode__(self):
         sb = u''
         for piece in self._pieces:
-            sb += unicode(piece)
+            sb += str(piece)
         return sb
 
     def __repr__(self):
@@ -100,7 +104,7 @@ class LilyString(Drawable):
         return int(self.u_plain())
 
     def __long__(self):
-        return long(self.u_plain())
+        return int(self.u_plain())
 
     def __float__(self):
         return float(self.u_plain())
@@ -139,6 +143,10 @@ class LilyString(Drawable):
             return LilyString(other).__add__(self)
 
     def __mul__(self, other):
+        if not isinstance(other, int):
+            raise TypeError("can't multiply sequence by non-int")
+        if other < 1:
+            return LilyString()
         newpieces = self._pieces * other
         new_pretty = LilyString()
         new_pretty._pieces = newpieces
@@ -307,7 +315,7 @@ class LilyString(Drawable):
 
     def _getslice(self, sliceobj):
         chars = self.u_plain()
-        ixs = range(*sliceobj.indices(len(chars)))
+        ixs = list(range(*sliceobj.indices(len(chars))))
         _new = LilyString()
         for i in ixs:
             _new += LilyString(chars[i], self.get_color_at(i))
@@ -372,13 +380,13 @@ class LilyString(Drawable):
             piece_color = piece.get_color()
             if maxsplit != -1:
                 #FIXME: bail earlier on this rather than re-splitting everything
-                prev_splits = sum(map(lambda p: len(p) - 1, split_pieces))
+                prev_splits = sum([len(p) - 1 for p in split_pieces])
                 tot_splits = len(split_piece) + prev_splits - 1
                 if tot_splits > maxsplit:
                     split_times = maxsplit - prev_splits
                     split_piece = piece.text.split(sep, split_times)
 
-            split_piece = map(lambda p: grow(p, piece_color), split_piece)
+            split_piece = [grow(p, piece_color) for p in split_piece]
             split_pieces.append(split_piece)
 
         if len(split_pieces) == 0:
@@ -434,7 +442,7 @@ class LilyString(Drawable):
         _new = deepcopy(self)
         if len(_new._pieces) == 0:
             return _new
-        for i in reversed(range(len(_new._pieces))):
+        for i in reversed(list(range(len(_new._pieces)))):
             _new._pieces[i].text = _new._pieces[i].text.rstrip(chars)
             if len(_new._pieces[i]) > 0:
                 break
@@ -513,7 +521,7 @@ class LilyString(Drawable):
 class LilyStringPiece(object):
     def __init__(self, s, color):
         try:
-            self.text = unicode(s)
+            self.text = str(s)
         except UnicodeDecodeError:
             self.text = s.decode('utf-8')
         self.color = color
