@@ -158,17 +158,10 @@ class LilyString(Drawable):
         return self.__mul__(other)
 
     def __iadd__(self, other):
-        try:
-            self._pieces += other._pieces
-        except AttributeError:
-            self._append(other)
-        self._flatten()
-        return self
+        return self.__add__(other)
 
     def __imul__(self, other):
-        self._pieces *= other
-        self._flatten()
-        return self
+        return self.__mul__(other)
 
     def __gt__(self, other):
         return self.u_plain() > other
@@ -366,12 +359,6 @@ class LilyString(Drawable):
             return
         self._pieces.append(LilyStringPiece(s, TextColor(color_str)))
 
-    def concat(self, components):
-        new_str = deepcopy(self)
-        for component in components:
-            new_str += component
-        return new_str
-
     def join(self, components):
         if len(components) <= 1:
             if isstringish(components):
@@ -393,7 +380,7 @@ class LilyString(Drawable):
             split_piece = piece.text.split(sep)
             piece_color = piece.get_color()
             if maxsplit != -1:
-                #TODO: bail earlier on this rather than re-splitting everything
+                #FIXME: bail earlier on this rather than re-splitting everything
                 prev_splits = sum(map(lambda p: len(p) - 1, split_pieces))
                 tot_splits = len(split_piece) + prev_splits - 1
                 if tot_splits > maxsplit:
@@ -404,7 +391,7 @@ class LilyString(Drawable):
             split_pieces.append(split_piece)
 
         if len(split_pieces) == 0:
-            return [grow('')]
+            return [] if sep is None else [grow('')]
 
         output = split_pieces[0]
         for i in range(1, len(split_pieces)):
