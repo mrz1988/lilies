@@ -8,9 +8,6 @@ import sys
 from ..lilystring import grow, wilt
 from ..lilystring import LilyStringError, InvalidInputError, LilyStringPiece
 
-if sys.version_info > (3, 0):
-    long = int
-
 class TestLilyString(unittest.TestCase):
     def setUp(self):
         self.integers = [0, 10, -4, 4325324, 32, -23412]

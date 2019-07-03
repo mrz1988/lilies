@@ -10,6 +10,7 @@
 
 from __future__ import print_function
 from builtins import str
+from builtins import input
 from . import grow, __version__
 from .test import test_all
 
@@ -19,4 +20,8 @@ print(grow('A colored text formatting tool for the command line',
 print('Version: ' + str(__version__))
 print('Author: Matt Zychowski')
 print()
+print('=' * 50)
+print()
+input("Press [ENTER] to run tests.")
+
 test_all()

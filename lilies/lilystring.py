@@ -17,10 +17,6 @@ from .colorama_shim import match_code as MATCH
 from .colorama_shim import reset_code as RESET
 from .colors import TextColor
 
-#Python 3 compatibility
-IS_PY3 = sys.version_info >= (3, 0)
-if IS_PY3:
-    str = str
 
 # Mapping dictionary for unicode -> ascii.
 UNI_TO_ASCII = {
@@ -81,8 +77,6 @@ class LilyString(Drawable):
         self.add = self._append
 
     def __str__(self):
-        if IS_PY3:
-            return self.__unicode__()
         sb = ''
         for piece in self._pieces:
             sb += str(piece)
@@ -530,41 +524,16 @@ class LilyStringPiece(object):
         return len(self.text)
 
     def __str__(self):
-        if IS_PY3:
-            return self.__unicode__()
-        return self.color_wrapped(self.decoded())
+        return self.color_wrapped(self.text)
 
     def __unicode__(self):
         return self.color_wrapped(self.text)
 
     def color_wrapped(self, s):
-        return self.color.ansi + s + RESET
+        return self.color.ansi + str(s) + RESET
 
     def get_color(self):
         return self.color.name
-
-    def decoded(self):
-        enc = sys.stdout.encoding
-        if enc == 'cp65001':
-            enc = 'utf-8'
-        if enc == 'utf-8':
-            return self.text.encode('utf-8')
-        elif enc == 'ascii':
-            fulls = ''
-            last_bad = 0
-            for i in range(len(self.text)):
-                if self.text[i] in UNI_TO_ASCII:
-                    if last_bad != i:
-                        s = self.text[last_bad: i].encode('ascii', 'replace')
-                        fulls += s
-                    fulls += UNI_TO_ASCII[self.text[i]]
-                    last_bad = i + 1
-            if last_bad != len(self.text):
-                fulls += self.text[last_bad: len(self.text)].encode('ascii',
-                                                                    'replace')
-            return fulls
-        else:
-            return self.text.encode(sys.stdout.encoding, 'replace')
 
 
 class LilyStringError(Exception):
