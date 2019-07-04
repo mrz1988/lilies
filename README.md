@@ -56,13 +56,13 @@ There are even neat helper functions, like `columnify` that can arrange sets of 
 ```
 >>> from lilies import columnify
 >>> strings = ['from there', 'to here', 'from here', 'to there',
-... 'lilies strings', 'are everywhere.',
+... 'lily strings', 'are everywhere.',
 ... 'one fish', 'two fish',
 ... grow('red fish', 'red'),
 ... grow('blue fish', 'blue')]
 >>> print(columnify(strings, sort=False))
 from there          to there            one fish            blue fish        
-to here             funny things        two fish         
+to here             lily strings        two fish         
 from here           are everywhere.     red fish 
 ```
 
