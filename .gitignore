@@ -4,3 +4,6 @@ build/*
 .vscode/*
 .DS_Store
 lilies.egg-info/*
+.tox/*
+MANIFEST
+.python-version
