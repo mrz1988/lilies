@@ -1,7 +1,7 @@
 from __future__ import print_function
 from builtins import map
 from builtins import range
-from .lilystring import grow, wilt
+from .helpers import grow, wilt
 
 
 def sortify(iter, case_insensitive=True):
@@ -33,7 +33,7 @@ def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3,
     # Technically this is only the count for the leftmost column, so its a max.
     entries_per_column, remainder = divmod(len(iter), cols)
     if (remainder > 0):
-        entries_per_column += 1 
+        entries_per_column += 1
 
     groups = []
     if left_to_right:
@@ -47,7 +47,7 @@ def columnify(iter, cols=0, width=80, justify='left', sort=True, spacing=3,
         # min is used here to avoid empty groups
         for i in range(entries_per_column):
             groups.append(resized[i::entries_per_column])
-    
+
     output = ''
     for group in groups:
         s = group[0]

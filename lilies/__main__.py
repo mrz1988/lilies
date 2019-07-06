@@ -9,27 +9,34 @@
 ################################################################################
 
 from __future__ import print_function
-from sys import argv, exit
+from sys import exit
+import argparse
 from builtins import str
 from builtins import input
 from . import grow, __version__
-from .test import test_all
+from .test import run_tests
 
-if len(argv) > 1 and argv[1] == 'test':
-    if not (test_all()):
-        exit(1)
-    else:
-        exit()
+description = "A colored text formatting tool for the command line"
+argp = argparse.ArgumentParser(description=description)
+argp.add_argument('-t', '--test', action='store_true', help="Only run tests.")
+argp.add_argument('-c', '--contains', default='',
+    help="Search for tests to run by substring")
+argp.add_argument('-g', '--grep', default='.*',
+    help="Grep for a subset of test cases to run")
+args = argp.parse_args()
 
+if not args.test:
+    print(grow('Lilies!', 'green'))
+    print(grow(description, 'yellow'))
+    print('Version: ' + str(__version__))
+    print('Author: Matt Zychowski')
+    print()
+    print('=' * 50)
+    print()
+    input("Press [ENTER] to run tests.")
 
-print(grow('Lilies!', 'green'))
-print(grow('A colored text formatting tool for the command line',
-           'yellow'))
-print('Version: ' + str(__version__))
-print('Author: Matt Zychowski')
-print()
-print('=' * 50)
-print()
-input("Press [ENTER] to run tests.")
-
-print(test_all())
+all_passed = run_tests(pattern=args.grep, contains=args.contains, verbosity=1)
+if (all_passed):
+    exit(0)
+else:
+    exit(1)

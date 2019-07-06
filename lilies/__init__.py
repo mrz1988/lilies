@@ -1,4 +1,6 @@
-from .lilystring import grow, wilt, endl
+from .lilystring import endl, isstringish
+from .lilyblock import LilyBlock
+from .helpers import grow, wilt
 from .utils import columnify, sortify
 from .colorama_shim import no_colorama
 from .management import lilies_init

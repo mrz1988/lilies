@@ -5,7 +5,7 @@ from builtins import range
 import unittest
 import math
 import sys
-from ..lilystring import grow, wilt
+from ..helpers import grow, wilt
 from ..lilystring import LilyStringError, InvalidInputError, LilyStringPiece
 
 class TestLilyString(unittest.TestCase):
@@ -252,6 +252,15 @@ class TestLilyString(unittest.TestCase):
             self.assertEqual(test_str.rstrip(), wilt(test_grow.rstrip()))
             self.assertEqual(test_str.strip(), wilt(test_grow.strip()))
 
+    def test_strip_with_chars(self):
+        test_input = '  xyyabcdxyyy'
+        control1 = '  xyyabcd'
+        control2 = 'abcd'
+        test1 = grow(test_input, 'red').strip('xy')
+        test2 = grow(test_input, 'red').strip('xy ')
+        self.assertEqual(control1, wilt(test1))
+        self.assertEqual(control2, wilt(test2))
+
     def test_wilt(self):
         for s in self.strings:
             p = grow(s, 'red')
@@ -329,6 +338,35 @@ class TestLilyString(unittest.TestCase):
             for i in range(len(control)):
                 self.assertEqual(control[i], wilt(test[i]))
 
+    def test_join_on_bad_input(self):
+        with self.assertRaises(TypeError):
+            grow(',').join(5)
+
+    def test_join_on_empty_str(self):
+        control = ''.join(self.strings)
+        test = wilt(grow('').join(self.strings))
+        self.assertEqual(control, test)
+
+    def test_join_on_commas(self):
+        control = ','.join(self.strings)
+        test = wilt(grow(',').join(self.strings))
+        self.assertEqual(control, test)
+
+    def test_join_nothing(self):
+        control = ','.join([])
+        test = wilt(grow(',').join([]))
+        self.assertEqual(control, test)
+
+    def test_join_single_str(self):
+        control = ','.join(["hey"])
+        test = wilt(grow(',').join(["hey"]))
+        self.assertEqual(control, test)
+
+    def test_join_single_lily(self):
+        control = ','.join(["hey"])
+        test = wilt(grow(',').join([grow("hey")]))
+        self.assertEqual(control, test)
+
     def test_iadd(self):
         # checking that this behaves almost like
         # strings assign by value
@@ -363,6 +401,60 @@ class TestLilyString(unittest.TestCase):
         self.assertEqual(control1, wilt(test1))
         self.assertEqual(control2, wilt(test2))
 
+    def test_reverse(self):
+        for s in self.strings:
+            p = grow(s, 'green')
+            control = "".join(reversed(s))
+            test = grow('').join(reversed(p))
+            self.assertEqual(control, wilt(test))
+
+    def test_contains_handles_bad_input(self):
+        p = grow("hello, world!", 'red')
+        with self.assertRaises(TypeError):
+            temp = 0 in p
+        with self.assertRaises(TypeError):
+            temp = 1.2 in p
+        with self.assertRaises(TypeError):
+            temp = [] in p
+        with self.assertRaises(TypeError):
+            temp = None in p
+        with self.assertRaises(TypeError):
+            temp = {} in p
+
+    def test_contains_works_with_python_strings(self):
+        p = grow("hello, world!", 'red')
+        self.assertTrue('e' in p)
+        self.assertTrue('llo' in p)
+        self.assertFalse('p' in p)
+        self.assertFalse('llo ' in p)
+
+    def test_contains_works_with_lilystrings(self):
+        p = grow("hello, ", 'red') + grow("world!", 'blue')
+        self.assertTrue(grow('e', 'red') in p)
+        self.assertTrue(grow('llo', 'red') in p)
+
+    def test_contains_with_lilystrings_fails_on_wrong_color(self):
+        p = grow("hello, ", 'red') + grow("world!", 'blue')
+        self.assertFalse(grow('e', 'blue') in p)
+        self.assertFalse(grow('llo', 'blue') in p)
+
+    def test_contains_with_lilystrings_works_with_mixed_colors(self):
+        p = grow("hello, ", 'red') + grow("world!", 'blue')
+        should_match = grow('o, ', 'red') + grow('wo', 'blue')
+        shouldnt_match = grow('o, wo', 'red')
+        self.assertTrue(should_match in p)
+        self.assertFalse(shouldnt_match in p)
+
+    def test_contains_works_with_full_string(self):
+        p1 = grow("hello, ", 'red') + grow("world!", 'blue')
+        p2 = grow("hello, ", 'red') + grow("world!", 'blue')
+        self.assertTrue(p1 in p2)
+        self.assertTrue(wilt(p1) in p2)
+
+    def test_contains_works_with_empty_string(self):
+        p = grow("hello, ", 'red') + grow("world!", 'blue')
+        self.assertTrue(grow('') in p)
+        self.assertTrue('' in p)
 
 def main():
     unittest.main()
