@@ -1,12 +1,12 @@
-################################################################################
+##########################################################################
 # Lilies
 # By: Matt Zychowski (copyright 2014-2019)
 #
 # A library wrapped around colorama for using colored strings in the terminal
-# window.  Provides advanced manipulation of colored strings, including accurate
-# slicing.
+# window.  Provides advanced manipulation of colored strings, including
+# accurate slicing.
 #
-################################################################################
+##########################################################################
 
 from __future__ import print_function
 from sys import exit
@@ -20,9 +20,9 @@ description = "A colored text formatting tool for the command line"
 argp = argparse.ArgumentParser(description=description)
 argp.add_argument('-t', '--test', action='store_true', help="Only run tests.")
 argp.add_argument('-c', '--contains', default='',
-    help="Search for tests to run by substring")
+                  help="Search for tests to run by substring")
 argp.add_argument('-g', '--grep', default='.*',
-    help="Grep for a subset of test cases to run")
+                  help="Grep for a subset of test cases to run")
 args = argp.parse_args()
 
 if not args.test:

@@ -1,21 +1,20 @@
 import os
 from copy import deepcopy
 from builtins import map
-from builtins import object
 from future.moves.itertools import zip_longest
 from .base import LilyBase
-from .lilystring import lstr, isstringish, LilyString
+from .lilystring import lstr, isstringish
 
 
 def block(obj, *args, **kwargs):
     if isinstance(obj, LilyBlock):
-        return obj
-    else:
-        return LilyBlock(obj, *args, **kwargs)
+        if obj._isblockish():
+            return obj
+    return LilyBlock(obj, *args, **kwargs)
 
 
 def islilyblock(obj):
-    return isinstance(obj, LilyBlock)
+    return isinstance(obj, LilyBlock) and obj._isblockish()
 
 
 def assert_lilyblock(obj):
@@ -24,16 +23,16 @@ def assert_lilyblock(obj):
 
 
 class LilyBlock(LilyBase):
-    def __init__(self, rows=[], color='default', newline_char=os.linesep):
+    def __init__(self, rows=[], color="default", newline_char=os.linesep):
         if isstringish(rows):
             rows = rows.split(newline_char)
         if islilyblock(rows):
             rows = rows._copy_rows()
-        if not hasattr(rows, '__iter__'):
+        if not hasattr(rows, "__iter__"):
             rows = [rows]
 
         self._endl = newline_char
-        grower = lstr if color == 'default' else lambda s: lstr(s, color)
+        grower = lstr if color == "default" else lambda s: lstr(s, color)
         rows = list(map(grower, rows))
 
         split_rows = []
@@ -43,9 +42,6 @@ class LilyBlock(LilyBase):
 
     def __str__(self):
         return self._endl.join(map(str, self._rows))
-
-    def __unicode__(self):
-        return self._endl.join(map(unicode, self._rows))
 
     def __repr__(self):
         return "c'''" + self.__str__() + "'''"
@@ -119,6 +115,9 @@ class LilyBlock(LilyBase):
     def _isstringish(self):
         return False
 
+    def _isblockish(self):
+        return True
+
     def wilt(self):
         rows = map(lambda r: r.wilt(), self._rows)
         return self._endl.join(rows)
@@ -135,7 +134,7 @@ class LilyBlock(LilyBase):
             width = self.width()
             rows = [s.resize(width) for s in rows]
         other_rows = lilyblock._copy_rows()
-        zipped = zip_longest(rows, other_rows, fillvalue=lstr(''))
+        zipped = zip_longest(rows, other_rows, fillvalue=lstr(""))
         new_rows = [r[0] + r[1] for r in zipped]
         return LilyBlock(new_rows)
 
@@ -147,12 +146,15 @@ class LilyBlock(LilyBase):
 
     def resize_x(self, amount, *args, **kwargs):
         rows = self._copy_rows()
-        str_resize = lambda s: s.resize(amount, *args, **kwargs)
+
+        def str_resize(s):
+            return s.resize(amount, *args, **kwargs)
+
         rows = map(str_resize, rows)
         return LilyBlock(rows)
 
-    def resize_y(self, amount, justify='top'):
-        if justify == 'center':
+    def resize_y(self, amount, justify="top"):
+        if justify == "center":
             cur_size = len(self._rows)
             delta = amount - cur_size
 
@@ -165,38 +167,38 @@ class LilyBlock(LilyBase):
             top_delta = delta // 2 if delta > 0 else sum(divmod(delta, 2))
 
             # top_delta means change to the top, justify to the _bottom_.
-            resize_step1 = self.resize_y(cur_size + top_delta, 'bottom')
-            return resize_step1.resize_y(amount, 'top')
-        elif justify == 'bottom':
+            resize_step1 = self.resize_y(cur_size + top_delta, "bottom")
+            return resize_step1.resize_y(amount, "top")
+        elif justify == "bottom":
             rows = self._copy_rows()
             delta = amount - len(rows)
             if delta < 0:
-                rows = rows[abs(delta):]
+                rows = rows[abs(delta) :]
                 return LilyBlock(rows)
             color = rows[0].get_color()
-            fill = lstr(' ', color)
+            fill = lstr(" ", color)
             rows = ([fill] * delta) + rows
             return LilyBlock(rows)
-        else: #assume top 'cause whatever
+        else:  # assume top 'cause whatever
             trimmed_rows = self._copy_rows()[:amount]
             if len(trimmed_rows) < amount:
                 delta = amount - len(trimmed_rows)
                 color = trimmed_rows[-1].get_color()
-                fill = lstr(' ', color)
+                fill = lstr(" ", color)
                 trimmed_rows += [fill] * delta
             return LilyBlock(trimmed_rows)
 
-    def resize(self, x=-1, y=-1, justify_x='left', justify_y='top', **kwargs):
-        if (y == -1):
+    def resize(self, x=-1, y=-1, justify_x="left", justify_y="top", **kwargs):
+        if y == -1:
             y_resized = LilyBlock(self._copy_rows())
         else:
             y_resized = self.resize_y(y, justify=justify_y)
-        if (x == -1):
+        if x == -1:
             return y_resized
         else:
             return y_resized.resize_x(x, justify=justify_x, **kwargs)
 
-    def normalize(self, justify='left'):
+    def normalize(self, justify="left"):
         return self.resize_x(self.width(), justify=justify)
 
     def to_lilystring(self):
@@ -205,10 +207,13 @@ class LilyBlock(LilyBase):
 
     def color(self, color_str):
         rows = self._copy_rows()
-        color_func = lambda s: s.color(color_str)
+
+        def color_func(s):
+            return s.color(color_str)
+
         return LilyBlock(map(color_func, rows))
 
-    def color_regex(self, pattern, color_str='', flags=0, num=0):
+    def color_regex(self, pattern, color_str="", flags=0, num=0):
         lily = self.to_lilystring()
         colored = lily.color_regex(pattern, color_str, flags, num)
         return LilyBlock(colored)
@@ -238,15 +243,21 @@ class LilyBlock(LilyBase):
         return LilyBlock(list(rows)[::-1])
 
     def lstrip(self, chars=None):
-        func = lambda s: s.lstrip(chars)
+        def func(s):
+            return s.lstrip(chars)
+
         return self._map_rebuild(func)
 
     def rstrip(self, chars=None):
-        func = lambda s: s.rstrip(chars)
+        def func(s):
+            return s.rstrip(chars)
+
         return self._map_rebuild(func)
 
     def strip_x(self, chars=None):
-        func = lambda s: s.strip(chars)
+        def func(s):
+            return s.strip(chars)
+
         return self._map_rebuild(func)
 
     def strip_y(self, chars=None):

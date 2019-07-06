@@ -3,6 +3,7 @@ import unittest
 import re
 from ..helpers import grow
 
+
 def run_tests(pattern='.*', contains='', verbosity=1):
     full_suite = unittest.TestLoader().discover('.')
     suite = _filter_tests(full_suite, pattern, contains)
@@ -25,6 +26,7 @@ def _filter_tests(suite, pattern, contains):
         if matches:
             new_suite.addTest(test)
     return new_suite
+
 
 def _list_of_tests(suite):
     for test in suite:

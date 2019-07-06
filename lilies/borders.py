@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 from builtins import range
 from builtins import object
-from .colors import TextColor
 from .lilystring import grow
 
 SINGLE_LINE = {
-    "horiz":           u'─',
-    "vert":            u'│',
-    "top left":        u'┌',
-    "top right":       u'┐',
-    "bottom left":     u'└',
-    "bottom right":    u'┘',
-    "left x single":   u'├',
-    "right x single":  u'┤',
-    "top x single":    u'┬',
+    "horiz": u'─',
+    "vert": u'│',
+    "top left": u'┌',
+    "top right": u'┐',
+    "bottom left": u'└',
+    "bottom right": u'┘',
+    "left x single": u'├',
+    "right x single": u'┤',
+    "top x single": u'┬',
     "bottom x single": u'┴',
-    "horiz x single":  u'┼',
-    "vert x single":   u'',
+    "horiz x single": u'┼',
+    "vert x single": u'',
 }
+
 
 class ComplexBorderStyle(object):
     def __init__(self, left_style=1, right_style=1,
@@ -73,38 +73,38 @@ class ComplexBorderStyle(object):
 
     def render_top_left(self):
         return grow(SINGLE_LINE['top left'], self.top_color) +\
-                grow(SINGLE_LINE['horiz'] * self.left_padding, self.top_color)
+            grow(SINGLE_LINE['horiz'] * self.left_padding, self.top_color)
 
     def render_top_right(self):
         return grow(SINGLE_LINE['horiz'] * self.right_padding,
                     self.top_color) +\
-               grow(SINGLE_LINE['top right'], self.top_color)
+            grow(SINGLE_LINE['top right'], self.top_color)
 
     def render_bottom_left(self):
         return grow(SINGLE_LINE['bottom left'], self.bottom_color) +\
-               grow(SINGLE_LINE['horiz'] * self.left_padding,
-                     self.bottom_color)
+            grow(SINGLE_LINE['horiz'] * self.left_padding,
+                 self.bottom_color)
 
     def render_bottom_right(self):
         return grow(SINGLE_LINE['horiz'] * self.right_padding,
                     self.bottom_color) +\
-               grow(SINGLE_LINE['bottom right'], self.bottom_color)
+            grow(SINGLE_LINE['bottom right'], self.bottom_color)
 
     def render_top(self, width):
         ctrwidth = width - self.get_total_width()
-        border = [self.render_top_left() +\
-                  grow(SINGLE_LINE['horiz'] * ctrwidth, self.top_color) +\
+        border = [self.render_top_left() +
+                  grow(SINGLE_LINE['horiz'] * ctrwidth, self.top_color) +
                   self.render_top_right()]
-        padding = [grow(' ' * ctrwidth, self.top_color)\
+        padding = [grow(' ' * ctrwidth, self.top_color)
                    for _ in range(self.top_padding)]
         return border + self.wrap_lines(padding, ctrwidth)
 
     def render_bottom(self, width):
         ctrwidth = width - self.get_total_width()
-        border = [self.render_bottom_left() +\
-                  grow(SINGLE_LINE['horiz'] * ctrwidth, self.bottom_color) +\
+        border = [self.render_bottom_left() +
+                  grow(SINGLE_LINE['horiz'] * ctrwidth, self.bottom_color) +
                   self.render_bottom_right()]
-        padding = [grow(' ' * ctrwidth, self.bottom_color)\
+        padding = [grow(' ' * ctrwidth, self.bottom_color)
                    for _ in range(self.bottom_padding)]
         return border + self.wrap_lines(padding, ctrwidth)
 
@@ -114,10 +114,11 @@ class ComplexBorderStyle(object):
     def wrap_line(self, line, width, justify='left'):
         cwidth = width - self.get_total_width()
         return grow(SINGLE_LINE['vert'], self.left_color) +\
-               grow(' ' * self.left_padding, self.left_color) +\
-               grow(line).resize(cwidth, justify=justify) +\
-               grow(' ' * self.right_padding, self.right_color) +\
-               grow(SINGLE_LINE['vert'], self.right_color)
+            grow(' ' * self.left_padding, self.left_color) +\
+            grow(line).resize(cwidth, justify=justify) +\
+            grow(' ' * self.right_padding, self.right_color) +\
+            grow(SINGLE_LINE['vert'], self.right_color)
+
 
 class BorderStyle(ComplexBorderStyle):
     def __init__(self, style=None, color='',

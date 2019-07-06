@@ -7,9 +7,7 @@ from builtins import object
 from future.utils import string_types
 from copy import deepcopy
 import os
-import sys
 import re
-import types
 
 from .base import LilyBase
 from .colorama_shim import match_code as MATCH
@@ -19,30 +17,101 @@ from .colors import TextColor
 
 # Mapping dictionary for unicode -> ascii.
 UNI_TO_ASCII = {
-    u'\u00c7': 'C', u'\u00fc': 'u', u'\u00e9': 'e', u'\u00e2': 'a',
-    u'\u00e4': 'a', u'\u00e0': 'a', u'\u00e5': 'a', u'\u00e7': 'c',
-    u'\u00ea': 'e', u'\u00eb': 'e', u'\u00e8': 'e', u'\u00ef': 'i',
-    u'\u00ee': 'i', u'\u00ec': 'i', u'\u00c4': 'A', u'\u00c5': 'A',
-    u'\u00c9': 'E', u'\u00e6': 'a', u'\u00c6': 'A', u'\u00f4': 'o',
-    u'\u00f6': 'o', u'\u00f2': 'o', u'\u00fb': 'u', u'\u00f9': 'u',
-    u'\u00ff': 'y', u'\u00d6': 'O', u'\u00dc': 'U', u'\u00a2': 'c',
-    u'\u00a3': 'p', u'\u00a5': 'Y', u'\u20a7': 'P', u'\u0192': 'f',
-    u'\u00e1': 'a', u'\u00ed': 'i', u'\u00f3': 'o', u'\u00fa': 'u',
-    u'\u00f1': 'n', u'\u00d1': 'N', u'\u00aa': '*', u'\u00ba': '*',
-    u'\u00bf': '?', u'\u2310': '~', u'\u00ac': '~', u'\u00a1': 'i',
-    u'\u00ab': '<', u'\u00bb': '>', u'\u2591': ' ', u'\u2592': '#',
-    u'\u2593': '#', u'\u2502': '|', u'\u2524': '|', u'\u2561': '|',
-    u'\u2562': '|', u'\u2556': ' ', u'\u2555': ' ', u'\u2563': '|',
-    u'\u2551': '|', u'\u2557': ' ', u'\u255d': ' ', u'\u255c': ' ',
-    u'\u255b': ' ', u'\u2510': ' ', u'\u2514': ' ', u'\u2534': '-',
-    u'\u252c': '-', u'\u251c': '|', u'\u2500': '-', u'\u253c': '+',
-    u'\u255e': '|', u'\u255f': '|', u'\u255a': ' ', u'\u2554': ' ',
-    u'\u2569': '=', u'\u2566': '=', u'\u2560': '|', u'\u2550': '=',
-    u'\u256c': '=', u'\u2567': '=', u'\u2568': '-', u'\u2564': '=',
-    u'\u2565': '-', u'\u2559': ' ', u'\u2558': ' ', u'\u2552': ' ',
-    u'\u2553': ' ', u'\u256b': '+', u'\u256a': '=', u'\u2518': ' ',
-    u'\u250c': ' ', u'\u2588': "*", u'\u2584': "*", u'\u258c': "*",
-    u'\u2590': "*", u'\u2580': "*", u'\u25a0': "*",
+    u"\u00c7": "C",
+    u"\u00fc": "u",
+    u"\u00e9": "e",
+    u"\u00e2": "a",
+    u"\u00e4": "a",
+    u"\u00e0": "a",
+    u"\u00e5": "a",
+    u"\u00e7": "c",
+    u"\u00ea": "e",
+    u"\u00eb": "e",
+    u"\u00e8": "e",
+    u"\u00ef": "i",
+    u"\u00ee": "i",
+    u"\u00ec": "i",
+    u"\u00c4": "A",
+    u"\u00c5": "A",
+    u"\u00c9": "E",
+    u"\u00e6": "a",
+    u"\u00c6": "A",
+    u"\u00f4": "o",
+    u"\u00f6": "o",
+    u"\u00f2": "o",
+    u"\u00fb": "u",
+    u"\u00f9": "u",
+    u"\u00ff": "y",
+    u"\u00d6": "O",
+    u"\u00dc": "U",
+    u"\u00a2": "c",
+    u"\u00a3": "p",
+    u"\u00a5": "Y",
+    u"\u20a7": "P",
+    u"\u0192": "f",
+    u"\u00e1": "a",
+    u"\u00ed": "i",
+    u"\u00f3": "o",
+    u"\u00fa": "u",
+    u"\u00f1": "n",
+    u"\u00d1": "N",
+    u"\u00aa": "*",
+    u"\u00ba": "*",
+    u"\u00bf": "?",
+    u"\u2310": "~",
+    u"\u00ac": "~",
+    u"\u00a1": "i",
+    u"\u00ab": "<",
+    u"\u00bb": ">",
+    u"\u2591": " ",
+    u"\u2592": "#",
+    u"\u2593": "#",
+    u"\u2502": "|",
+    u"\u2524": "|",
+    u"\u2561": "|",
+    u"\u2562": "|",
+    u"\u2556": " ",
+    u"\u2555": " ",
+    u"\u2563": "|",
+    u"\u2551": "|",
+    u"\u2557": " ",
+    u"\u255d": " ",
+    u"\u255c": " ",
+    u"\u255b": " ",
+    u"\u2510": " ",
+    u"\u2514": " ",
+    u"\u2534": "-",
+    u"\u252c": "-",
+    u"\u251c": "|",
+    u"\u2500": "-",
+    u"\u253c": "+",
+    u"\u255e": "|",
+    u"\u255f": "|",
+    u"\u255a": " ",
+    u"\u2554": " ",
+    u"\u2569": "=",
+    u"\u2566": "=",
+    u"\u2560": "|",
+    u"\u2550": "=",
+    u"\u256c": "=",
+    u"\u2567": "=",
+    u"\u2568": "-",
+    u"\u2564": "=",
+    u"\u2565": "-",
+    u"\u2559": " ",
+    u"\u2558": " ",
+    u"\u2552": " ",
+    u"\u2553": " ",
+    u"\u256b": "+",
+    u"\u256a": "=",
+    u"\u2518": " ",
+    u"\u250c": " ",
+    u"\u2588": "*",
+    u"\u2584": "*",
+    u"\u258c": "*",
+    u"\u2590": "*",
+    u"\u2580": "*",
+    u"\u25a0": "*",
 }
 
 
@@ -78,19 +147,19 @@ def assert_stringish(obj):
 
 
 class LilyString(LilyBase):
-    def __init__(self, s='', color=''):
+    def __init__(self, s="", color=""):
         self._pieces = []
         self._append(s, color)
         self.add = self._append
 
     def __str__(self):
-        sb = ''
+        sb = ""
         for piece in self._pieces:
             sb += str(piece)
         return sb
 
     def __unicode__(self):
-        sb = u''
+        sb = u""
         for piece in self._pieces:
             sb += str(piece)
         return sb
@@ -215,7 +284,7 @@ class LilyString(LilyBase):
         return revd
 
     def wilt(self):
-        sb = u''
+        sb = u""
         for piece in self._pieces:
             sb += piece.text
         return sb
@@ -223,40 +292,56 @@ class LilyString(LilyBase):
     def _isstringish(self):
         return True
 
+    def _isblockish(self):
+        return False
+
     def is_text(self, text):
         return self.wilt() == _wlt(text)
 
     def isnt_text(self, text):
         return self.wilt() != _wlt(text)
 
-    def resize(self, size, justify='left', fillchar=' ',
-               l_fill_clr=MATCH, r_fill_clr=MATCH, add_elipsis=False,
-               elipsis='..', elipsis_clr=''):
+    def resize(
+        self,
+        size,
+        justify="left",
+        fillchar=" ",
+        l_fill_clr=MATCH,
+        r_fill_clr=MATCH,
+        add_elipsis=False,
+        elipsis="..",
+        elipsis_clr="",
+    ):
         if self.__len__() <= size:
-            return self._expand(size, justify, fillchar,
-                                l_fill_clr, r_fill_clr)
+            return self._expand(
+                size, justify, fillchar, l_fill_clr, r_fill_clr
+            )
         else:
             return self._truncate(size, add_elipsis, elipsis, elipsis_clr)
 
-    def _expand(self, width, justify, fillchar, l_fill_clr=MATCH,
-                r_fill_clr=MATCH):
+    def _expand(
+        self, width, justify, fillchar, l_fill_clr=MATCH, r_fill_clr=MATCH
+    ):
         fillchar = self._check_fillchar(fillchar)
-        left_color = self._match_and_validate_color(l_fill_clr,
-                                                    0)   #0 is leftmost char
-        right_color = self._match_and_validate_color(r_fill_clr,
-                                                     -1) #-1 is rightmost char
+        left_color = self._match_and_validate_color(
+            l_fill_clr, 0
+        )  # 0 is leftmost char
+        right_color = self._match_and_validate_color(
+            r_fill_clr, -1
+        )  # -1 is rightmost char
         cur_len = self.__len__()
         if cur_len == width:
             return deepcopy(self)
 
         padding = width - cur_len
-        if justify == 'left':
+        if justify == "left":
             return self._justify_left(padding, fillchar, right_color)
-        elif justify == 'right':
+        elif justify == "right":
             return self._justify_right(padding, fillchar, left_color)
-        elif justify == 'center':
-            return self._justify_center(padding, fillchar,
-                                        left_color, right_color)
+        elif justify == "center":
+            return self._justify_center(
+                padding, fillchar, left_color, right_color
+            )
         else:
             raise InvalidInputError("unexpected value for justify")
 
@@ -290,32 +375,33 @@ class LilyString(LilyBase):
             return self.get_color_at(index)
         return TextColor(color).name
 
-    def ljust(self, width, fillchar=' ', fill_clr=MATCH):
-        return self._expand(width, 'left', fillchar, r_fill_clr=fill_clr)
+    def ljust(self, width, fillchar=" ", fill_clr=MATCH):
+        return self._expand(width, "left", fillchar, r_fill_clr=fill_clr)
 
-    def rjust(self, width, fillchar=' ', fill_clr=MATCH):
-        return self._expand(width, 'right', fillchar, l_fill_clr=fill_clr)
+    def rjust(self, width, fillchar=" ", fill_clr=MATCH):
+        return self._expand(width, "right", fillchar, l_fill_clr=fill_clr)
 
-    def center(self, width, fillchar=' ', l_fill_clr=MATCH, r_fill_clr=MATCH):
-        return self._expand(width, 'center', fillchar, l_fill_clr, r_fill_clr)
+    def center(self, width, fillchar=" ", l_fill_clr=MATCH, r_fill_clr=MATCH):
+        return self._expand(width, "center", fillchar, l_fill_clr, r_fill_clr)
 
     def _truncate(self, length, add_elipsis, elipsis, elipsis_clr):
         new = deepcopy(self)
         trim_to_length = length - len(elipsis) if add_elipsis else length
         if trim_to_length < 1:
-            raise LilyStringError("Truncating string would " + \
-                                  "make it too short")
+            raise LilyStringError(
+                "Truncating string would " + "make it too short"
+            )
 
         total = 0
         for i in range(len(new._pieces)):
             total += len(new._pieces[i].text)
             if total >= trim_to_length:
-                new._pieces = new._pieces[:i + 1]
+                new._pieces = new._pieces[: i + 1]
                 break
 
         if total > trim_to_length:
             chars_to_cut = total - trim_to_length
-            new._pieces[-1].text = new._pieces[-1].text[: -chars_to_cut]
+            new._pieces[-1].text = new._pieces[-1].text[:-chars_to_cut]
         if not add_elipsis:
             return new
 
@@ -352,7 +438,7 @@ class LilyString(LilyBase):
     def color_char(self, index, *args, **kwargs):
         return self.color_chars([index], *args, **kwargs)
 
-    def color_chars(self, indices, color_str=''):
+    def color_chars(self, indices, color_str=""):
         chars = self.wilt()
         ixs = sorted(indices)
         _new = LilyString()
@@ -367,7 +453,7 @@ class LilyString(LilyBase):
         _new._flatten()
         return _new
 
-    def color_regex(self, pattern, color_str='', flags=0, num=0):
+    def color_regex(self, pattern, color_str="", flags=0, num=0):
         chars = self.wilt()
         if num == 1:
             m = [re.match(pattern, chars, flags)]
@@ -380,14 +466,14 @@ class LilyString(LilyBase):
             ixs += list(range(group.start(), group.end()))
         return self.color_chars(ixs, color_str)
 
-    def _append(self, s, color_str=''):
-        if s == '':
+    def _append(self, s, color_str=""):
+        if s == "":
             return
         self._pieces.append(LilyStringPiece(s, TextColor(color_str)))
 
     def join(self, components):
-        if not hasattr(components, '__iter__'):
-            raise TypeError('can only join an iterable')
+        if not hasattr(components, "__iter__"):
+            raise TypeError("can only join an iterable")
         if len(components) == 0:
             return LilyString()
         if len(components) == 1:
@@ -413,7 +499,8 @@ class LilyString(LilyBase):
             split_piece = piece.text.split(sep)
             piece_color = piece.get_color()
             if maxsplit != -1:
-                #FIXME: bail earlier on this rather than re-splitting everything
+                # FIXME: bail earlier on this rather than re-splitting
+                # everything
                 prev_splits = sum([len(p) - 1 for p in split_pieces])
                 tot_splits = len(split_piece) + prev_splits - 1
                 if tot_splits > maxsplit:
@@ -424,7 +511,7 @@ class LilyString(LilyBase):
             split_pieces.append(split_piece)
 
         if len(split_pieces) == 0:
-            return [] if sep is None else [LilyString('')]
+            return [] if sep is None else [LilyString("")]
 
         output = split_pieces[0]
         for i in range(1, len(split_pieces)):
@@ -546,7 +633,7 @@ class LilyStringPiece(object):
         try:
             self.text = str(s)
         except UnicodeDecodeError:
-            self.text = s.decode('utf-8')
+            self.text = s.decode("utf-8")
         self.color = color
 
     def __len__(self):

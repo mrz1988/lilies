@@ -6,7 +6,7 @@ from .helpers import grow, wilt
 
 def sortify(iter, case_insensitive=True):
     if case_insensitive:
-        sortkey = lambda s: wilt(s).lower()
+        def sortkey(s): return wilt(s).lower()
     else:
         sortkey = wilt
     return sorted(list(iter), key=sortkey)
@@ -64,4 +64,4 @@ def _resize_all(iter, size, justify):
             justify,
             add_elipsis=True,
             fillchar=' '
-        ) for s in iter]
+            ) for s in iter]

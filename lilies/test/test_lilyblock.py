@@ -1,32 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from builtins import str
-from builtins import range
 import unittest
-import math
-import sys
 import os
 from ..helpers import grow, wilt
-from ..lilyblock import LilyBlock, islilyblock
+from ..lilyblock import LilyBlock
+
 
 class TestLilyBlock(unittest.TestCase):
     def setUp(self):
-        self.strings = ['hello',
-                        'dfDfEEFdfaC',
-                        'Mister John',
-                        'mr. jOhn',
-                        "iSn't it",
-                        'comma,separated,values',
-                        'trailing,comma,',
-                        ',']
-        self.padded_strings = ['',
-                               '     ',
-                               '  xy  abcd  xy    ',
-                               'abcd',
-                               'abcdxyyy',
-                               'xyxyabcd   ',
-                               '   xxxx',
-                               '    ']
+        self.strings = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+        ]
+        self.padded_strings = [
+            "",
+            "     ",
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd   ",
+            "   xxxx",
+            "    ",
+        ]
         self.padded_block = LilyBlock(os.linesep.join(self.padded_strings))
         self.single_str = os.linesep.join(self.strings)
         self.single_lily = grow(self.single_str)
@@ -48,107 +49,123 @@ class TestLilyBlock(unittest.TestCase):
 
     def test_lilyblock_creation_with_whitespace(self):
         control = os.linesep.join(self.padded_strings)
-        self.assertEqual(len(self.padded_strings), len(control.split(os.linesep)))
+        self.assertEqual(
+            len(self.padded_strings), len(control.split(os.linesep))
+        )
         self.assertEqual(control, wilt(self.padded_block))
 
     def test_resize_x_larger(self):
-        control_group = ['hello                  ',
-                         'dfDfEEFdfaC            ',
-                         'Mister John            ',
-                         'mr. jOhn               ',
-                         "iSn't it               ",
-                         'comma,separated,values ',
-                         'trailing,comma,        ',
-                         ',                      ']
+        control_group = [
+            "hello                  ",
+            "dfDfEEFdfaC            ",
+            "Mister John            ",
+            "mr. jOhn               ",
+            "iSn't it               ",
+            "comma,separated,values ",
+            "trailing,comma,        ",
+            ",                      ",
+        ]
         control = os.linesep.join(control_group)
         test = LilyBlock(self.single_str).resize_x(23)
         self.assertEqual(control, wilt(test))
 
     def test_resize_y_top_larger(self):
-        control_group = ['hello',
-                         'dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn',
-                         "iSn't it",
-                         'comma,separated,values',
-                         'trailing,comma,',
-                         ',',
-                         ' ',
-                         ' ',
-                         ' ']
+        control_group = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+            " ",
+            " ",
+            " ",
+        ]
         control = os.linesep.join(control_group)
-        test = LilyBlock(self.single_str).resize_y(11, 'top')
+        test = LilyBlock(self.single_str).resize_y(11, "top")
         self.assertEqual(control, wilt(test))
 
     def test_resize_y_bottom_larger(self):
-        control_group = [' ',
-                         ' ',
-                         'hello',
-                         'dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn',
-                         "iSn't it",
-                         'comma,separated,values',
-                         'trailing,comma,',
-                         ',']
+        control_group = [
+            " ",
+            " ",
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+        ]
         control = os.linesep.join(control_group)
-        test = LilyBlock(self.single_str).resize_y(10, 'bottom')
+        test = LilyBlock(self.single_str).resize_y(10, "bottom")
         self.assertEqual(control, wilt(test))
 
     def test_resize_y_center_larger(self):
-        control_group = [' ',
-                         ' ',
-                         'hello',
-                         'dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn',
-                         "iSn't it",
-                         'comma,separated,values',
-                         'trailing,comma,',
-                         ',',
-                         ' ',
-                         ' ',
-                         ' ']
+        control_group = [
+            " ",
+            " ",
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+            " ",
+            " ",
+            " ",
+        ]
         control = os.linesep.join(control_group)
-        test = LilyBlock(self.single_str).resize_y(13, 'center')
+        test = LilyBlock(self.single_str).resize_y(13, "center")
         self.assertEqual(control, wilt(test))
 
     def test_resize_y_top_smaller(self):
-        control_group = ['hello',
-                         'dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn',
-                         "iSn't it",
-                         'comma,separated,values']
+        control_group = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+        ]
         control = os.linesep.join(control_group)
-        test = LilyBlock(self.single_str).resize_y(6, 'top')
+        test = LilyBlock(self.single_str).resize_y(6, "top")
         self.assertEqual(control, wilt(test))
 
     def test_resize_y_bottom_smaller(self):
-        control_group = ['dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn',
-                         "iSn't it",
-                         'comma,separated,values',
-                         'trailing,comma,',
-                         ',']
+        control_group = [
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+        ]
         control = os.linesep.join(control_group)
-        test = LilyBlock(self.single_str).resize_y(7, 'bottom')
+        test = LilyBlock(self.single_str).resize_y(7, "bottom")
         self.assertEqual(control, wilt(test))
 
     def test_resize_y_center_smaller(self):
-        control_group = ['dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn',
-                         "iSn't it",
-                         'comma,separated,values']
+        control_group = [
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+        ]
         control = os.linesep.join(control_group)
-        test = LilyBlock(self.single_str).resize_y(5, 'center')
+        test = LilyBlock(self.single_str).resize_y(5, "center")
         self.assertEqual(control, wilt(test))
 
     def test_indexing(self):
-        control1 = 'hello'
-        control2 = 'comma,separated,values'
+        control1 = "hello"
+        control2 = "comma,separated,values"
         block = LilyBlock(self.single_str)
         test1 = wilt(block[0])
         test2 = wilt(block[-3])
@@ -156,42 +173,37 @@ class TestLilyBlock(unittest.TestCase):
         self.assertEqual(control2, test2)
 
     def test_slicing_subset1(self):
-        control_group = ['hello',
-                         'dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn']
+        control_group = ["hello", "dfDfEEFdfaC", "Mister John", "mr. jOhn"]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block[:4])
         self.assertEqual(control, test)
 
     def test_slicing_subset2(self):
-        control_group = ['dfDfEEFdfaC',
-                         'Mister John']
+        control_group = ["dfDfEEFdfaC", "Mister John"]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block[1:3])
         self.assertEqual(control, test)
 
     def test_slicing_stepwise(self):
-        control_group = ['hello',
-                         'Mister John',
-                         "iSn't it",
-                         'trailing,comma,']
+        control_group = ["hello", "Mister John", "iSn't it", "trailing,comma,"]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block[::2])
         self.assertEqual(control, test)
 
     def test_slicing_reverse(self):
-        control_group = [',',
-                         'trailing,comma,',
-                         'comma,separated,values',
-                         "iSn't it",
-                         'mr. jOhn',
-                         'Mister John',
-                         'dfDfEEFdfaC',
-                         'hello']
+        control_group = [
+            ",",
+            "trailing,comma,",
+            "comma,separated,values",
+            "iSn't it",
+            "mr. jOhn",
+            "Mister John",
+            "dfDfEEFdfaC",
+            "hello",
+        ]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block[::-1])
@@ -210,272 +222,312 @@ class TestLilyBlock(unittest.TestCase):
         self.assertEqual(8, block.height())
 
     def test_normalize(self):
-        control_group = ['hello                 ',
-                         'dfDfEEFdfaC           ',
-                         'Mister John           ',
-                         'mr. jOhn              ',
-                         "iSn't it              ",
-                         'comma,separated,values',
-                         'trailing,comma,       ',
-                         ',                     ']
+        control_group = [
+            "hello                 ",
+            "dfDfEEFdfaC           ",
+            "Mister John           ",
+            "mr. jOhn              ",
+            "iSn't it              ",
+            "comma,separated,values",
+            "trailing,comma,       ",
+            ",                     ",
+        ]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block.normalize())
         self.assertEqual(control, test)
 
     def test_concat_without_squash(self):
-        control_group = ['hello                 hello',
-                         'dfDfEEFdfaC           dfDfEEFdfaC',
-                         'Mister John           Mister John',
-                         'mr. jOhn              mr. jOhn',
-                         "iSn't it              iSn't it",
-                         'comma,separated,valuescomma,separated,values',
-                         'trailing,comma,       trailing,comma,',
-                         ',                     ,']
+        control_group = [
+            "hello                 hello",
+            "dfDfEEFdfaC           dfDfEEFdfaC",
+            "Mister John           Mister John",
+            "mr. jOhn              mr. jOhn",
+            "iSn't it              iSn't it",
+            "comma,separated,valuescomma,separated,values",
+            "trailing,comma,       trailing,comma,",
+            ",                     ,",
+        ]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block.concat(block))
         self.assertEqual(control, test)
 
     def test_concat_with_squash(self):
-        control_group = ['hellohello',
-                         'dfDfEEFdfaCdfDfEEFdfaC',
-                         'Mister JohnMister John',
-                         'mr. jOhnmr. jOhn',
-                         "iSn't itiSn't it",
-                         'comma,separated,valuescomma,separated,values',
-                         'trailing,comma,trailing,comma,',
-                         ',,']
+        control_group = [
+            "hellohello",
+            "dfDfEEFdfaCdfDfEEFdfaC",
+            "Mister JohnMister John",
+            "mr. jOhnmr. jOhn",
+            "iSn't itiSn't it",
+            "comma,separated,valuescomma,separated,values",
+            "trailing,comma,trailing,comma,",
+            ",,",
+        ]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block.concat(block, squash=True))
         self.assertEqual(control, test)
 
     def test_append(self):
-        new_row = 'new row!'
-        control_group = ['hello',
-                         'dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn',
-                         "iSn't it",
-                         'comma,separated,values',
-                         'trailing,comma,',
-                         ',',
-                         new_row]
+        new_row = "new row!"
+        control_group = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+            new_row,
+        ]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block.append(new_row))
         self.assertEqual(control, test)
 
     def test_addition(self):
-        control_group = ['hello                 hello',
-                         'dfDfEEFdfaC           dfDfEEFdfaC',
-                         'Mister John           Mister John',
-                         'mr. jOhn              mr. jOhn',
-                         "iSn't it              iSn't it",
-                         'comma,separated,valuescomma,separated,values',
-                         'trailing,comma,       trailing,comma,',
-                         ',                     ,']
+        control_group = [
+            "hello                 hello",
+            "dfDfEEFdfaC           dfDfEEFdfaC",
+            "Mister John           Mister John",
+            "mr. jOhn              mr. jOhn",
+            "iSn't it              iSn't it",
+            "comma,separated,valuescomma,separated,values",
+            "trailing,comma,       trailing,comma,",
+            ",                     ,",
+        ]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block + block)
         self.assertEqual(control, test)
 
     def test_multiplication(self):
-        control_group = ['hello                 hello                 hello',
-                         'dfDfEEFdfaC           dfDfEEFdfaC           dfDfEEFdfaC',
-                         'Mister John           Mister John           Mister John',
-                         'mr. jOhn              mr. jOhn              mr. jOhn',
-                         "iSn't it              iSn't it              iSn't it",
-                         'comma,separated,valuescomma,separated,valuescomma,separated,values',
-                         'trailing,comma,       trailing,comma,       trailing,comma,',
-                         ',                     ,                     ,']
+        control_group = [
+            "hello                 hello                 hello",
+            "dfDfEEFdfaC           dfDfEEFdfaC           dfDfEEFdfaC",
+            "Mister John           Mister John           Mister John",
+            "mr. jOhn              mr. jOhn              mr. jOhn",
+            "iSn't it              iSn't it              iSn't it",
+            "comma,separated,valuescomma,separated,values"
+            + "comma,separated,values",
+            "trailing,comma,       trailing,comma,       trailing,comma,",
+            ",                     ,                     ,",
+        ]
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block * 3)
         self.assertEqual(control, test)
 
     def test_wilt(self):
-        control_group = ['hello',
-                         'dfDfEEFdfaC',
-                         'Mister John',
-                         'mr. jOhn',
-                         "iSn't it",
-                         'comma,separated,values',
-                         'trailing,comma,',
-                         ',']
+        control_group = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+        ]
         control = os.linesep.join(control_group)
-        block = LilyBlock(self.single_str, 'red')
+        block = LilyBlock(self.single_str, "red")
         test1 = wilt(block)
         test2 = block.wilt()
         self.assertEqual(control, test1)
         self.assertEqual(control, test2)
 
     def test_lstrip_with_no_chars(self):
-        control_group = ['',
-                         '',
-                         'xy  abcd  xy    ',
-                         'abcd',
-                         'abcdxyyy',
-                         'xyxyabcd   ',
-                         'xxxx',
-                         '']
+        control_group = [
+            "",
+            "",
+            "xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd   ",
+            "xxxx",
+            "",
+        ]
         control = os.linesep.join(control_group)
         test = self.padded_block.lstrip()
         self.assertEqual(control, wilt(test))
 
     def test_lstrip_with_chars(self):
-        control_group1 = ['',
-                          '     ',
-                          '  xy  abcd  xy    ',
-                          'abcd',
-                          'abcdxyyy',
-                          'abcd   ',
-                          '   xxxx',
-                          '    ']
-        control_group2 = ['',
-                          '',
-                          'abcd  xy    ',
-                          'abcd',
-                          'abcdxyyy',
-                          'abcd   ',
-                          '',
-                          '']
+        control_group1 = [
+            "",
+            "     ",
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "abcd   ",
+            "   xxxx",
+            "    ",
+        ]
+        control_group2 = [
+            "",
+            "",
+            "abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "abcd   ",
+            "",
+            "",
+        ]
         control1 = os.linesep.join(control_group1)
         control2 = os.linesep.join(control_group2)
-        test1 = self.padded_block.lstrip('xy')
-        test2 = self.padded_block.lstrip('xy ')
+        test1 = self.padded_block.lstrip("xy")
+        test2 = self.padded_block.lstrip("xy ")
         self.assertEqual(control1, wilt(test1))
         self.assertEqual(control2, wilt(test2))
 
     def test_rstrip_with_no_chars(self):
-        control_group = ['',
-                         '',
-                         '  xy  abcd  xy',
-                         'abcd',
-                         'abcdxyyy',
-                         'xyxyabcd',
-                         '   xxxx',
-                         '']
+        control_group = [
+            "",
+            "",
+            "  xy  abcd  xy",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd",
+            "   xxxx",
+            "",
+        ]
         control = os.linesep.join(control_group)
         test = self.padded_block.rstrip()
         self.assertEqual(control, wilt(test))
 
     def test_rstrip_with_chars(self):
-        control_group1 = ['',
-                          '     ',
-                          '  xy  abcd  xy    ',
-                          'abcd',
-                          'abcd',
-                          'xyxyabcd   ',
-                          '   ',
-                          '    ']
-        control_group2 = ['',
-                          '',
-                          '  xy  abcd',
-                          'abcd',
-                          'abcd',
-                          'xyxyabcd',
-                          '',
-                          '']
+        control_group1 = [
+            "",
+            "     ",
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcd",
+            "xyxyabcd   ",
+            "   ",
+            "    ",
+        ]
+        control_group2 = [
+            "",
+            "",
+            "  xy  abcd",
+            "abcd",
+            "abcd",
+            "xyxyabcd",
+            "",
+            "",
+        ]
         control1 = os.linesep.join(control_group1)
         control2 = os.linesep.join(control_group2)
-        test1 = self.padded_block.rstrip('xy')
-        test2 = self.padded_block.rstrip('xy ')
+        test1 = self.padded_block.rstrip("xy")
+        test2 = self.padded_block.rstrip("xy ")
         self.assertEqual(control1, wilt(test1))
         self.assertEqual(control2, wilt(test2))
 
     def test_tstrip_with_no_chars(self):
-        control_group = ['  xy  abcd  xy    ',
-                         'abcd',
-                         'abcdxyyy',
-                         'xyxyabcd   ',
-                         '   xxxx',
-                         '    ']
+        control_group = [
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd   ",
+            "   xxxx",
+            "    ",
+        ]
         control = os.linesep.join(control_group)
         test = self.padded_block.tstrip()
         self.assertEqual(control, wilt(test))
 
     def test_tstrip_with_chars(self):
-        control_group1 = ['     ',
-                          '  xy  abcd  xy    ',
-                          'abcd',
-                          'abcdxyyy',
-                          'xyxyabcd   ',
-                          '   xxxx',
-                          '    ']
-        control_group2 = ['  xy  abcd  xy    ',
-                          'abcd',
-                          'abcdxyyy',
-                          'xyxyabcd   ',
-                          '   xxxx',
-                          '    ']
+        control_group1 = [
+            "     ",
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd   ",
+            "   xxxx",
+            "    ",
+        ]
+        control_group2 = [
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd   ",
+            "   xxxx",
+            "    ",
+        ]
         control1 = os.linesep.join(control_group1)
         control2 = os.linesep.join(control_group2)
-        test1 = self.padded_block.tstrip('xy')
-        test2 = self.padded_block.tstrip('xy ')
+        test1 = self.padded_block.tstrip("xy")
+        test2 = self.padded_block.tstrip("xy ")
         self.assertEqual(control1, wilt(test1))
         self.assertEqual(control2, wilt(test2))
 
     def test_bstrip_with_no_chars(self):
-        control_group = ['',
-                         '     ',
-                         '  xy  abcd  xy    ',
-                         'abcd',
-                         'abcdxyyy',
-                         'xyxyabcd   ',
-                         '   xxxx']
+        control_group = [
+            "",
+            "     ",
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd   ",
+            "   xxxx",
+        ]
         control = os.linesep.join(control_group)
         test = self.padded_block.bstrip()
         self.assertEqual(control, wilt(test))
 
     def test_bstrip_with_chars(self):
-        control_group1 = ['',
-                          '     ',
-                          '  xy  abcd  xy    ',
-                          'abcd',
-                          'abcdxyyy',
-                          'xyxyabcd   ',
-                          '   xxxx',
-                          '    ']
-        control_group2 = ['',
-                          '     ',
-                          '  xy  abcd  xy    ',
-                          'abcd',
-                          'abcdxyyy',
-                          'xyxyabcd   ']
+        control_group1 = [
+            "",
+            "     ",
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd   ",
+            "   xxxx",
+            "    ",
+        ]
+        control_group2 = [
+            "",
+            "     ",
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd   ",
+        ]
         control1 = os.linesep.join(control_group1)
         control2 = os.linesep.join(control_group2)
-        test1 = self.padded_block.bstrip('xy')
-        test2 = self.padded_block.bstrip('xy ')
+        test1 = self.padded_block.bstrip("xy")
+        test2 = self.padded_block.bstrip("xy ")
         self.assertEqual(control1, wilt(test1))
         self.assertEqual(control2, wilt(test2))
 
     def test_2d_strip_with_no_chars(self):
-        control_group = ['xy  abcd  xy',
-                         'abcd',
-                         'abcdxyyy',
-                         'xyxyabcd',
-                         'xxxx']
+        control_group = [
+            "xy  abcd  xy",
+            "abcd",
+            "abcdxyyy",
+            "xyxyabcd",
+            "xxxx",
+        ]
         control = os.linesep.join(control_group)
         test = self.padded_block.strip()
         self.assertEqual(control, wilt(test))
 
     def test_2d_strip_with_chars(self):
-        control_group1 = ['     ',
-                          '  xy  abcd  xy    ',
-                          'abcd',
-                          'abcd',
-                          'abcd   ',
-                          '   ',
-                          '    ']
-        control_group2 = ['abcd',
-                          'abcd',
-                          'abcd',
-                          'abcd']
+        control_group1 = [
+            "     ",
+            "  xy  abcd  xy    ",
+            "abcd",
+            "abcd",
+            "abcd   ",
+            "   ",
+            "    ",
+        ]
+        control_group2 = ["abcd", "abcd", "abcd", "abcd"]
         control1 = os.linesep.join(control_group1)
         control2 = os.linesep.join(control_group2)
-        test1 = self.padded_block.strip('xy')
-        test2 = self.padded_block.strip('xy ')
+        test1 = self.padded_block.strip("xy")
+        test2 = self.padded_block.strip("xy ")
         self.assertEqual(control1, wilt(test1))
         self.assertEqual(control2, wilt(test2))
