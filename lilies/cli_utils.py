@@ -1,7 +1,8 @@
 from __future__ import print_function
 from builtins import map
 from builtins import range
-from .helpers import grow, wilt
+from .grow import grow
+from .base_utils import wilt
 
 
 def sortify(iter, case_insensitive=True):

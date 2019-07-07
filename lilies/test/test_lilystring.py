@@ -4,7 +4,8 @@ from builtins import str
 from builtins import range
 import unittest
 import math
-from ..helpers import grow, wilt
+from ..grow import grow
+from ..base_utils import wilt
 from ..lilystring import LilyStringError, InvalidInputError, LilyStringPiece
 
 

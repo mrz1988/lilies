@@ -1,17 +1,9 @@
 from __future__ import print_function
 import os
-from builtins import str
 from future.utils import string_types
 from .base import LilyBase
 from .lilyblock import LilyBlock
 from .lilystring import LilyString
-
-
-def wilt(s):
-    if isinstance(s, LilyBase):
-        return s.wilt()
-    else:
-        return str(s)
 
 
 def grow(s, *args, **kwargs):

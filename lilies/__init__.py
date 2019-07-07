@@ -1,9 +1,10 @@
-from .helpers import grow, wilt
-from .utils import columnify, sortify
+from .grow import grow
+from .cli_utils import columnify, sortify
+from .base_utils import isstringish, islilyblock, wilt
 from .colorama_shim import no_colorama
-from .management import lilies_init
-from .lilystring import LilyString, isstringish
-from .lilyblock import LilyBlock, block, islilyblock
+from .manage import lilies_init
+from .lilystring import LilyString
+from .lilyblock import LilyBlock, block
 
 __version__ = "0.0.3"
 

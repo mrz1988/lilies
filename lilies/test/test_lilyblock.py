@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 import unittest
 import os
-from ..helpers import grow, wilt
+from ..grow import grow
+from ..base_utils import wilt
 from ..lilyblock import LilyBlock
 
 
@@ -28,6 +29,7 @@ class TestLilyBlock(unittest.TestCase):
             "   xxxx",
             "    ",
         ]
+        self.small_block = LilyBlock(["a", "b", "c"])
         self.padded_block = LilyBlock(os.linesep.join(self.padded_strings))
         self.single_str = os.linesep.join(self.strings)
         self.single_lily = grow(self.single_str)
@@ -269,7 +271,7 @@ class TestLilyBlock(unittest.TestCase):
         test = wilt(block.concat(block, squash=True))
         self.assertEqual(control, test)
 
-    def test_append(self):
+    def test_append_string_default(self):
         new_row = "new row!"
         control_group = [
             "hello",
@@ -285,6 +287,98 @@ class TestLilyBlock(unittest.TestCase):
         control = os.linesep.join(control_group)
         block = LilyBlock(self.single_str)
         test = wilt(block.append(new_row))
+        self.assertEqual(control, test)
+
+    def test_append_block_default(self):
+        control_group = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+            "a",
+            "b",
+            "c",
+        ]
+        control = os.linesep.join(control_group)
+        block = LilyBlock(self.single_str)
+        test = wilt(block.append(self.small_block))
+        self.assertEqual(control, test)
+
+    def test_append_lilystring_default(self):
+        control_group = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+            "a lilystring",
+        ]
+        control = os.linesep.join(control_group)
+        block = LilyBlock(self.single_str)
+        test = wilt(block.append(grow("a lilystring", "red")))
+        self.assertEqual(control, test)
+
+    def test_append_string_justify(self):
+        new_row = "new row!"
+        control_group = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+            "              " + new_row,
+        ]
+        control = os.linesep.join(control_group)
+        block = LilyBlock(self.single_str)
+        test = wilt(block.append(new_row, justify="right"))
+        self.assertEqual(control, test)
+
+    def test_append_block_justify(self):
+        control_group = [
+            "          a           ",
+            "          b           ",
+            "          c           ",
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+        ]
+        control = os.linesep.join(control_group)
+        block = LilyBlock(self.single_str)
+        test = wilt(self.small_block.append(block, justify="center"))
+        self.assertEqual(control, test)
+
+    def test_append_lilystring_justify(self):
+        new_row = "new row!"
+        control_group = [
+            "hello",
+            "dfDfEEFdfaC",
+            "Mister John",
+            "mr. jOhn",
+            "iSn't it",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
+            "              " + new_row,
+        ]
+        control = os.linesep.join(control_group)
+        block = LilyBlock(self.single_str)
+        lily = grow(new_row, "red")
+        test = wilt(block.append(lily, justify="right"))
         self.assertEqual(control, test)
 
     def test_addition(self):

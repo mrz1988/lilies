@@ -1,7 +1,7 @@
 from __future__ import print_function
 import unittest
 import re
-from ..helpers import grow
+from ..grow import grow
 
 
 def run_tests(pattern=".*", contains="", verbosity=1):

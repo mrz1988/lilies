@@ -3,23 +3,14 @@ from copy import deepcopy
 from builtins import map
 from future.moves.itertools import zip_longest
 from .base import LilyBase
-from .lilystring import lstr, isstringish
+from .base_utils import isstringish, islilyblock
+from .lilystring import lstr
 
 
 def block(obj, *args, **kwargs):
-    if isinstance(obj, LilyBlock):
-        if obj._isblockish():
-            return obj
+    if islilyblock(obj):
+        return obj
     return LilyBlock(obj, *args, **kwargs)
-
-
-def islilyblock(obj):
-    return isinstance(obj, LilyBlock) and obj._isblockish()
-
-
-def assert_lilyblock(obj):
-    if not islilyblock(obj):
-        raise TypeError("Expected LilyBlock: " + repr(obj))
 
 
 class LilyBlock(LilyBase):
@@ -122,13 +113,25 @@ class LilyBlock(LilyBase):
         rows = map(lambda r: r.wilt(), self._rows)
         return self._endl.join(rows)
 
-    def append(self, row):
-        split_row = row.split(self._endl)
-        rows = deepcopy(self._rows) + split_row
-        return LilyBlock(list(map(lstr, rows)))
+    def append(self, row, justify="left"):
+        other = block(row)
+        if justify != "left":
+            if other.width() > self.width():
+                top = self.resize_x(other.width(), justify=justify)
+                top_rows = top._copy_rows()
+                bottom_rows = other._copy_rows()
+            else:
+                top_rows = self._copy_rows()
+                bottom = other.resize_x(self.width(), justify=justify)
+                bottom_rows = bottom._copy_rows()
+        else:
+            top_rows = self._copy_rows()
+            bottom_rows = other._copy_rows()
+
+        rows = top_rows + bottom_rows
+        return LilyBlock(map(lstr, rows))
 
     def concat(self, lilyblock, squash=False):
-        assert_lilyblock(lilyblock)
         rows = self._copy_rows()
         if not squash:
             width = self.width()

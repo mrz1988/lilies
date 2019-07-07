@@ -10,6 +10,7 @@ import os
 import re
 
 from .base import LilyBase
+from .base_utils import isstringish, wilt
 from .colorama_shim import match_code as MATCH
 from .colorama_shim import reset_code as RESET
 from .colors import TextColor
@@ -116,34 +117,10 @@ UNI_TO_ASCII = {
 
 
 def lstr(s, *args, **kwargs):
-    if isinstance(s, LilyString):
+    if isinstance(s, LilyString) and s._isstringish():
         return s
     else:
         return LilyString(s, *args, **kwargs)
-
-
-def _wlt(s):
-    """
-    For internal wilting.
-    Used for better organization and avoiding circular imports
-    """
-    if isinstance(s, LilyBase):
-        return s.wilt()
-    return str(s)
-
-
-def isstringish(obj):
-    if issubclass(type(obj), LilyBase):
-        # This is a hack, since for whatever reason
-        # python considers LilyBase and LilyString to
-        # both be instances of one another.
-        return obj._isstringish()
-    return isinstance(obj, (string_types,))
-
-
-def assert_stringish(obj):
-    if not isstringish(obj):
-        raise TypeError("Expected something string-like: " + repr(obj))
 
 
 class LilyString(LilyBase):
@@ -296,10 +273,10 @@ class LilyString(LilyBase):
         return False
 
     def is_text(self, text):
-        return self.wilt() == _wlt(text)
+        return self.wilt() == wilt(text)
 
     def isnt_text(self, text):
-        return self.wilt() != _wlt(text)
+        return self.wilt() != wilt(text)
 
     def resize(
         self,
@@ -523,11 +500,11 @@ class LilyString(LilyBase):
         return output
 
     def find(self, s, start=None, end=None):
-        s = _wlt(s)
+        s = wilt(s)
         return self.wilt().find(s, start, end)
 
     def rfind(self, s, start=None, end=None):
-        s = _wlt(s)
+        s = wilt(s)
         return self.wilt().rfind(s, start, end)
 
     def lower(self):
@@ -574,13 +551,13 @@ class LilyString(LilyBase):
         return self.lstrip(chars).rstrip(chars)
 
     def count(self, sub, *args, **kwargs):
-        return self.wilt().count(_wlt(sub), *args, **kwargs)
+        return self.wilt().count(wilt(sub), *args, **kwargs)
 
     def startswith(self, prefix, *args, **kwargs):
-        return self.wilt().startswith(_wlt(prefix), *args, **kwargs)
+        return self.wilt().startswith(wilt(prefix), *args, **kwargs)
 
     def endswith(self, suffix, *args, **kwargs):
-        return self.wilt().endswith(_wlt(suffix), *args, **kwargs)
+        return self.wilt().endswith(wilt(suffix), *args, **kwargs)
 
     def isalnum(self):
         return self.wilt().isalnum()
