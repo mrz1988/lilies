@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/mrz1988/lilies.svg?branch=master)](https://travis-ci.org/mrz1988/lilies)
 [![Code Coverage](https://codecov.io/gh/mrz1988/lilies/branch/master/graphs/badge.svg)](https://codecov.io/gh/mrz1988/lilies/branch/master)
 
-Lilies is a cross-platform text formatting tool for python on the command line, powered by popular coloring library [colorama](https://pypi.org/project/colorama/). It helps to hide weirdness from ANSI color characters, and adds powerful tools to interact with colored text. Lilies supports both python 2.7, and python 3.4 and up.
+Lilies is a cross-platform colored CLI text formatting tool for python, powered by popular coloring library [colorama](https://pypi.org/project/colorama/). It helps to hide weirdness from ANSI color characters, and adds powerful tools to interact with colored text. Lilies supports both python 2.7, and python 3.4 and up.
 
 ![Sup, world?](https://raw.githubusercontent.com/mrz1988/lilies/master/screenshots/screenshot01.png)
 
