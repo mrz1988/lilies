@@ -4,15 +4,15 @@ import re
 from ..helpers import grow
 
 
-def run_tests(pattern='.*', contains='', verbosity=1):
-    full_suite = unittest.TestLoader().discover('.')
+def run_tests(pattern=".*", contains="", verbosity=1):
+    full_suite = unittest.TestLoader().discover(".")
     suite = _filter_tests(full_suite, pattern, contains)
     runner = unittest.TextTestRunner(verbosity=verbosity)
     all_passed = runner.run(suite).wasSuccessful()
     if all_passed:
-        print(grow("Testing passed!", 'green'))
+        print(grow("Testing passed!", "green"))
     else:
-        print(grow("Testing failed. See the output above.", 'red'))
+        print(grow("Testing failed. See the output above.", "red"))
     print()
     return all_passed
 
@@ -37,5 +37,5 @@ def _list_of_tests(suite):
                 yield t
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_tests(verbosity=2)

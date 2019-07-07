@@ -7,3 +7,4 @@ lilies.egg-info/*
 .tox/*
 MANIFEST
 .python-version
+.coverage

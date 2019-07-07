@@ -1,0 +1,32 @@
+sudo: false
+language: python
+cache: pip
+
+matrix:
+  include:
+    - python: 2.7
+      env: TOXENV=py27
+    - python: 3.4
+      env: TOXENV=py34
+    - python: 3.5
+      env: TOXENV=py35
+    - python: 3.6
+      env: TOXENV=py36
+    - python: 3.7
+      env: TOXENV=py37,codecov
+      dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
+      sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
+
+install:
+  - pip install -r requirements-test.txt
+
+before_script:
+  # Run flake8 tests only on Python 2.7 and 3.7...
+  # 1) stop the build if there are Python syntax errors or undefined names
+  # 2) exit-zero treats all errors as warnings.  The GitHub editor is 127 chars wide
+  - if [[ $TRAVIS_PYTHON_VERSION == *.7 ]]; then
+      flake8 --config tox.ini lilies;
+    fi
+
+script:
+  - tox

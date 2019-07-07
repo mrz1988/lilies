@@ -21,7 +21,7 @@ def grow(s, *args, **kwargs):
         if os.linesep in s:
             return LilyBlock(s, *args, **kwargs)
         return LilyString(s, *args, **kwargs)
-    elif hasattr(s, '__iter__'):
+    elif hasattr(s, "__iter__"):
         return LilyBlock(s, *args, **kwargs)
     else:
         return LilyString(s, *args, **kwargs)

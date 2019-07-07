@@ -1,5 +1,4 @@
-tox
+-r requirements-test.txt
 tox-pyenv
-pytest
-flake8
 black
+pre-commit

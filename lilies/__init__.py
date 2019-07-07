@@ -13,20 +13,17 @@ lilies_init()
 
 __all__ = [
     # helpers
-    'grow',
-    'wilt',
-    'block',
-    'isstringish',
-    'islilyblock',
-
+    "grow",
+    "wilt",
+    "block",
+    "isstringish",
+    "islilyblock",
     # layouts
-    'columnify',
-    'sortify',
-
+    "columnify",
+    "sortify",
     # classes
-    'LilyString',
-    'LilyBlock',
-
+    "LilyString",
+    "LilyBlock",
     # management
-    'no_colorama',
+    "no_colorama",
 ]

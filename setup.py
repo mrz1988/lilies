@@ -23,16 +23,13 @@ def get_version(path):
 
 
 setup(
-    name='lilies',
-    version=get_version(os.path.join('lilies', '__init__.py')),
-    description='A tool for creating colorful, formatted command line output',
-    url='https://github.com/mrz1988/lilies',
-    license='MIT',
-    author='Matt Zychowski',
-    author_email='mrz2004@gmail.com',
-    packages=['lilies', 'lilies.test'],
-    install_requires=[
-        'colorama',
-        'future'
-    ],
+    name="lilies",
+    version=get_version(os.path.join("lilies", "__init__.py")),
+    description="A tool for creating colorful, formatted command line output",
+    url="https://github.com/mrz1988/lilies",
+    license="MIT",
+    author="Matt Zychowski",
+    author_email="mrz2004@gmail.com",
+    packages=["lilies", "lilies.test"],
+    install_requires=["colorama", "future"],
 )
