@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 from future.utils import string_types
 from .base import LilyBase

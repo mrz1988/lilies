@@ -1,5 +1,5 @@
 from .grow import grow
-from .cli_utils import columnify, sortify
+from .cli_utils import columnify, sortify, bordered
 from .base_utils import isstringish, islilyblock, wilt
 from .colorama_shim import no_colorama
 from .manage import lilies_init
@@ -22,6 +22,7 @@ __all__ = [
     # layouts
     "columnify",
     "sortify",
+    "bordered",
     # classes
     "LilyString",
     "LilyBlock",

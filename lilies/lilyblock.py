@@ -1,6 +1,8 @@
 import os
 from copy import deepcopy
 from builtins import map
+from builtins import str
+from future.utils import python_2_unicode_compatible
 from future.moves.itertools import zip_longest
 from .base import LilyBase
 from .base_utils import isstringish, islilyblock
@@ -13,6 +15,7 @@ def block(obj, *args, **kwargs):
     return LilyBlock(obj, *args, **kwargs)
 
 
+@python_2_unicode_compatible
 class LilyBlock(LilyBase):
     def __init__(self, rows=[], color="default", newline_char=os.linesep):
         if isstringish(rows):

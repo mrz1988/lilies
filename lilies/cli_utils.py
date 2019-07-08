@@ -1,8 +1,32 @@
-from __future__ import print_function
 from builtins import map
 from builtins import range
 from .grow import grow
 from .base_utils import wilt
+from .lilyblock import block
+from .borders import border_char
+
+
+def bordered(s, bordercolor="", borderstyle="thin"):
+    blc = block(s)
+    horiz_char = border_char("lr", borderstyle)
+    horiz = horiz_char * blc.width()
+    horiz = grow(horiz, bordercolor)
+    top = block(horiz)
+    partial = top.append(blc).append(horiz)
+    top_left = _brderchar("br", bordercolor, borderstyle)
+    top_right = _brderchar("bl", bordercolor, borderstyle)
+    bot_left = _brderchar("tr", bordercolor, borderstyle)
+    bot_right = _brderchar("tl", bordercolor, borderstyle)
+    vert = _brderchar("tb", bordercolor, borderstyle)
+    vert = [vert] * blc.height()
+    l_vert = block([top_left] + vert + [bot_left])
+    r_vert = block([top_right] + vert + [bot_right])
+    return l_vert + partial + r_vert
+
+
+def _brderchar(vector, color, style):
+    ch = border_char(vector, style)
+    return grow(ch, color)
 
 
 def sortify(iter, case_insensitive=True):

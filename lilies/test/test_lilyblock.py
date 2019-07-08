@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import unittest
 import os
 from ..grow import grow
@@ -33,6 +34,9 @@ class TestLilyBlock(unittest.TestCase):
         self.padded_block = LilyBlock(os.linesep.join(self.padded_strings))
         self.single_str = os.linesep.join(self.strings)
         self.single_lily = grow(self.single_str)
+
+    def test_print(self):
+        print(LilyBlock("☃"))
 
     def test_lilyblock_creation_list(self):
         control = self.single_str

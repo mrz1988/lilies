@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 from builtins import str
 from builtins import range
 import unittest
@@ -23,7 +24,9 @@ class TestLilyString(unittest.TestCase):
             "mr. jOhn",
             "iSn't it",
             u"☃",
-            "comma,separated,values" "trailing,comma," ",",
+            "comma,separated,values",
+            "trailing,comma,",
+            ",",
         ]
         self.longs = [
             int(123456754382390234),
@@ -56,6 +59,9 @@ class TestLilyString(unittest.TestCase):
             "bright cyan",
             "bright yellow",
         ]
+
+    def test_print(self):
+        print(grow("☃", "red"))
 
     def test_integer_casting(self):
         for i in self.integers:

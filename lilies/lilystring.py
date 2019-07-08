@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 from builtins import map
 from builtins import str
 from builtins import range
 from builtins import object
-from future.utils import string_types
+from future.utils import string_types, python_2_unicode_compatible
 from copy import deepcopy
 import os
 import re
@@ -123,6 +122,7 @@ def lstr(s, *args, **kwargs):
         return LilyString(s, *args, **kwargs)
 
 
+@python_2_unicode_compatible
 class LilyString(LilyBase):
     def __init__(self, s="", color=""):
         self._pieces = []

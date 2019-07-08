@@ -11,3 +11,4 @@ exclude_lines =
 ignore_errors = True
 omit =
     lilies/test/*
+    lilies/base.py
