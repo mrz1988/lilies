@@ -3,9 +3,7 @@
 from __future__ import print_function
 import unittest
 import os
-from ..grow import grow
-from ..base_utils import wilt
-from ..lilyblock import LilyBlock
+from lilies import grow, wilt, LilyBlock
 
 
 class TestLilyBlock(unittest.TestCase):

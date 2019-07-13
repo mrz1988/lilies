@@ -5,9 +5,12 @@ from builtins import str
 from builtins import range
 import unittest
 import math
-from ..grow import grow
-from ..base_utils import wilt
-from ..lilystring import LilyStringError, InvalidInputError, LilyStringPiece
+from lilies import grow, wilt
+from lilies.lilystring import (
+    LilyStringError,
+    InvalidInputError,
+    LilyStringPiece,
+)
 
 
 class TestLilyString(unittest.TestCase):

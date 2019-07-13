@@ -1,7 +1,9 @@
 from __future__ import print_function
 import unittest
 import re
-from ..grow import grow
+import argparse
+from sys import exit
+from lilies import grow
 
 
 def run_tests(pattern=".*", contains="", verbosity=1):
@@ -38,4 +40,26 @@ def _list_of_tests(suite):
 
 
 if __name__ == "__main__":
-    run_tests(verbosity=2)
+    description = "Lilies unit tests"
+    argp = argparse.ArgumentParser(description=description)
+    argp.add_argument(
+        "-c",
+        "--contains",
+        default="",
+        help="Search for tests to run by substring",
+    )
+    argp.add_argument(
+        "-g",
+        "--grep",
+        default=".*",
+        help="Grep for a subset of test cases to run",
+    )
+    args = argp.parse_args()
+
+    all_passed = run_tests(
+        pattern=args.grep, contains=args.contains, verbosity=1
+    )
+    if all_passed:
+        exit(0)
+    else:
+        exit(1)

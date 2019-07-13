@@ -3,9 +3,7 @@
 from __future__ import unicode_literals
 import unittest
 import os
-from ..grow import grow
-from ..base_utils import wilt
-from ..cli_utils import bordered
+from lilies import grow, wilt, bordered
 
 
 class TestCliUtils(unittest.TestCase):

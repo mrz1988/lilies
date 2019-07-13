@@ -6,7 +6,7 @@ from .manage import lilies_init
 from .lilystring import LilyString
 from .lilyblock import LilyBlock, block
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 version = VERSION = __version__
 
