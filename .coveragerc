@@ -12,3 +12,4 @@ ignore_errors = True
 omit =
     test/*
     lilies/base.py
+    lilies/__main__.py
