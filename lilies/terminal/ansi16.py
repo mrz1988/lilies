@@ -3,6 +3,7 @@ from builtins import super
 from .ansi8open import Ansi8OpenTerminal
 from .exceptions import UnsupportedColorException
 from . import ansicodes
+from ..style import Style
 from ..style.palette import get_color
 
 # darks
@@ -98,3 +99,30 @@ class Ansi16Terminal(Ansi8OpenTerminal):
         if l > 35:
             return DARK_TO_LIGHT[color]
         return color
+
+    def test(self):
+        # remove the first "No color" color and unsupported backgrounds
+        fg_colors = self.supported_colors[1:]
+        bg_colors = self.supported_colors[1:9]
+        swatches = [
+            ["" for x in range(len(fg_colors))] for y in range(len(bg_colors))
+        ]
+
+        for i in range(len(fg_colors)):
+            for j in range(len(bg_colors)):
+                style = Style(fg=fg_colors[i], bg=bg_colors[j])
+                diff = style.diff(Style())
+                reset_diff = Style().diff(style)
+                color = self.encode_sequence(diff)
+                reset = self.encode_sequence(reset_diff)
+                swatches[j][i] = "{clr} A {reset}".format(
+                    clr=color, reset=reset
+                )
+
+        text_rows = ["~Lilies~", "Terminal test: ANSI 16 Colors", ""]
+        text_rows.append("Color table:")
+        color_rows = map(lambda rowlist: "".join(rowlist), swatches)
+
+        print("\n".join(text_rows + list(color_rows)))
+        self.test_attributes()
+        print("\n")

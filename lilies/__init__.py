@@ -6,7 +6,7 @@ from .lilystring import LilyString
 from .lilyblock import LilyBlock, block
 from . import terminal
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 version = VERSION = __version__
 

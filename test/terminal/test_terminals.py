@@ -420,7 +420,7 @@ def test_encode_sequence_properly_encodes_multi(term, stylediff, ansi):
 
 
 @pytest.mark.parametrize(
-    "term", [NOCOLOR, ANSI256, ANSI8, ANSI8OPEN, TRUECOLOR]
+    "term", [NOCOLOR, ANSI256, ANSI8, ANSI8OPEN, ANSI16, AIXTERM, TRUECOLOR]
 )
 def test_terminal_print_test_does_not_throw(term):
     term.test()
