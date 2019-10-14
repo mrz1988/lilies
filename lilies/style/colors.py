@@ -17,7 +17,7 @@ def hsl_to_rgb(h, s, l):
     s_ratio = s / 100.0
 
     rgb_ratios = colorsys.hls_to_rgb(h_ratio, l_ratio, s_ratio)
-    return tuple(map(lambda n: round(n * 255), rgb_ratios))
+    return tuple(map(lambda n: int(round(n * 255)), rgb_ratios))
 
 
 class Color(object):
