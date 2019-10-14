@@ -2,7 +2,7 @@ import pytest
 
 from lilies.terminal.detect import (
     _get_system,
-    detect,
+    _detect,
     NO_COLOR,
     ANSI8,
     ANSI8_OPEN,
@@ -63,5 +63,5 @@ def test_get_system_does_not_throw():
     ],
 )
 def test_detect_can_properly_detect_systems(system, output):
-    expected = detect(system)
+    expected = _detect(system)
     assert expected == output

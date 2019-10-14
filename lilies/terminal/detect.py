@@ -4,6 +4,15 @@ import platform
 import subprocess
 from builtins import object
 
+from .nocolor import NoColorTerminal
+from .ansi8 import Ansi8Terminal
+from .ansi8open import Ansi8OpenTerminal
+from .aixterm import AixTerminal
+from .ansi16 import Ansi16Terminal
+from .ansi256 import Ansi256Terminal
+from .truecolor import TrueColorTerminal
+from .windows import WinTrueColor, Win256Color, WinLegacy
+
 
 # Note: The order, names, and numbers
 # on these may change at any time.
@@ -15,14 +24,46 @@ ANSI16 = 4
 AIXTERM = 5
 ANSI256 = 6
 FULL_RGB = 7
+WIN10_24BIT = 8
+WIN10_256 = 9
 WIN32 = 8
+
+TERM_CLASSES = {
+    NO_COLOR: NoColorTerminal,
+    ANSI8: Ansi8Terminal,
+    ANSI8_OPEN: Ansi8OpenTerminal,
+    ANSI16: Ansi16Terminal,
+    AIXTERM: AixTerminal,
+    ANSI256: Ansi256Terminal,
+    FULL_RGB: TrueColorTerminal,
+    WIN10_24BIT: WinTrueColor,
+    WIN10_256: Win256Color,
+    WIN32: WinLegacy,
+}
+
+
+_term = None
+
+
+def detect_terminal():
+    global _term
+    if _term is not None:
+        return _term
+
+    term_type = _detect()
+    term_cls = TERM_CLASSES.get(term_type) or NoColorTerminal
+    _term = term_cls()
+    return _term
 
 
 def _get_system():
     plat = platform.system()
     env = os.environ
     stdout = sys.stdout
-    version = platform.release().split(".")
+    if "Windows" in plat:
+        version = platform.version().split(".")
+    else:
+        version = platform.release().split(".")
     try:
         result = subprocess.check_output(["tput", "colors"])
         tput_colors = int(result.strip())
@@ -48,7 +89,7 @@ class SystemProperties(object):
         self.tput_colors = tput_colors
 
 
-def detect(system=_get_system()):
+def _detect(system=_get_system()):
     if not system.stdout.isatty():
         return NO_COLOR
 
@@ -98,17 +139,13 @@ def detect(system=_get_system()):
 def _get_windows_color(system):
     # TODO: detect cygwin/conemu?
 
-    # FIXME
-    # Chalk uses something like this,
-    # but this fails badly if we are in
-    # CMD, or presumably also in PowerShell...
-    # release = system.version
-    # if release[0] == "10":
-    #    # Windows10 started to add real color support.
-    #    # Detect if this version is up to date
-    #    micro_ver = int(release[2])
-    #    if micro_ver > 10586:
-    #        return FULL_RGB if micro_ver > 14931 else ANSI256
+    release = system.ver
+    if release[0] == "10":
+        # Windows10 started to add real color support.
+        # Detect if this version is up to date
+        micro_ver = int(release[2])
+        if micro_ver > 10586:
+            return WIN10_24BIT if micro_ver > 14931 else WIN10_256
 
     return WIN32
 

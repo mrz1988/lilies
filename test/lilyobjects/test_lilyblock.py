@@ -4,6 +4,7 @@ from __future__ import print_function
 import unittest
 import os
 from lilies import grow, wilt, LilyBlock
+from lilies.style.parse import parse_style
 
 
 class TestLilyBlock(unittest.TestCase):
@@ -428,7 +429,8 @@ class TestLilyBlock(unittest.TestCase):
             ",",
         ]
         control = os.linesep.join(control_group)
-        block = LilyBlock(self.single_str, "red")
+        style = parse_style("red")
+        block = LilyBlock(self.single_str, style)
         test1 = wilt(block)
         test2 = block.wilt()
         self.assertEqual(control, test1)

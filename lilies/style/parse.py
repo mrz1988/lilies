@@ -1,9 +1,10 @@
 from future.utils import string_types
 from . import colors
+from .palette import get_color
 from .styles import Style
 
 
-class InvalidStyleException(Exception):
+class InvalidStyleError(Exception):
     pass
 
 
@@ -39,13 +40,34 @@ def _translate_attr(attr):
 
 
 def parse_style(style):
+    if style is None:
+        return Style()
+
+    return _parse_style_str(style)
+
+
+def _parse_style_str(style):
     """
-    parses the entire style string.
+    parses style as a style string.
     Format:
     comma, separated, attributes FG_COLOR on BG_COLOR
+
+    Examples:
+
+    Bold, underlined, red text on a black background
+    bold, underlined red on black
+
+    Red text on blue background:
+    red on blue
+
+    Green text:
+    green
+
+    Normal text on a white background:
+    on white
     """
     if not isinstance(style, (string_types,)):
-        raise InvalidStyleException("Expected a string type")
+        raise InvalidStyleError("Expected a string type")
     # Step 1: split out attributes with commas
     # and clean components for whitespace
     step1 = style.split(",")
@@ -58,7 +80,7 @@ def parse_style(style):
     step1 = step1[-1]
     for attr in attrs:
         if not _is_attr(attr):
-            raise InvalidStyleException(
+            raise InvalidStyleError(
                 "Expected attribute: {attr}".format(attr=attr)
             )
 
@@ -72,7 +94,7 @@ def parse_style(style):
     has_attr = len(step2) > 0 and _is_attr(step2[0])
     expect_no_attributes = len(step2) > 1 and not has_attr
     if expect_no_attributes and len(attrs) > 0:
-        raise InvalidStyleException("Unexpected comma")
+        raise InvalidStyleError("Unexpected comma")
     if has_attr:
         attrs.append(step2[0])
         # remove the attribute from our set, we're done with it
@@ -87,9 +109,9 @@ def parse_style(style):
         ix = step2.index("on")
         bg_str = "".join(step2[ix + 1 :])
         bg_str = _clean_colorname(bg_str)
-        bg = colors.get(bg_str)
+        bg = get_color(bg_str)
         if not bg:
-            raise InvalidStyleException(
+            raise InvalidStyleError(
                 "Invalid background color: {bg}".format(bg=bg_str)
             )
         # Step 3 should now be JUST a foreground color.
@@ -107,9 +129,9 @@ def parse_style(style):
     if len(fg_str) == 0:
         fg = colors.Color()
     else:
-        fg = colors.get(fg_str)
+        fg = get_color(fg_str)
         if not fg:
-            raise InvalidStyleException(
+            raise InvalidStyleError(
                 "Invalid foreground color: {fg}".format(fg=fg_str)
             )
 

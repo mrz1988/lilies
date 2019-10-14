@@ -4,9 +4,12 @@ from builtins import map
 from builtins import str
 from future.utils import python_2_unicode_compatible
 from future.moves.itertools import zip_longest
+
+from .style import Style
 from .base import LilyBase
 from .base_utils import isstringish, islilyblock
 from .lilystring import lstr
+from .compiler import compile_all
 
 
 def block(obj, *args, **kwargs):
@@ -17,7 +20,7 @@ def block(obj, *args, **kwargs):
 
 @python_2_unicode_compatible
 class LilyBlock(LilyBase):
-    def __init__(self, rows=[], color="default", newline_char=os.linesep):
+    def __init__(self, rows=[], style=Style(), newline_char=os.linesep):
         if isstringish(rows):
             rows = rows.split(newline_char)
         if islilyblock(rows):
@@ -26,7 +29,7 @@ class LilyBlock(LilyBase):
             rows = [rows]
 
         self._endl = newline_char
-        grower = lstr if color == "default" else lambda s: lstr(s, color)
+        grower = lstr if style.is_default() else lambda s: lstr(s, style)
         rows = list(map(grower, rows))
 
         split_rows = []
@@ -66,7 +69,7 @@ class LilyBlock(LilyBase):
         if other < 1:
             return LilyBlock()
         new = LilyBlock(self._copy_rows())
-        for i in range(other - 1):
+        for _ in range(other - 1):
             new = new.concat(self)
         return new
 
@@ -101,7 +104,8 @@ class LilyBlock(LilyBase):
         return sum(map(len, self._rows))
 
     def __hash__(self):
-        return hash(self.__str__())
+        with compile_all:
+            return hash(self.__str__())
 
     def _copy_rows(self):
         return deepcopy(self._rows)
@@ -181,16 +185,16 @@ class LilyBlock(LilyBase):
             if delta < 0:
                 rows = rows[abs(delta) :]
                 return LilyBlock(rows)
-            color = rows[0].get_color()
-            fill = lstr(" ", color)
+            style = rows[0].style_at(0) or Style()
+            fill = lstr(" ", style)
             rows = ([fill] * delta) + rows
             return LilyBlock(rows)
         else:  # assume top 'cause whatever
             trimmed_rows = self._copy_rows()[:amount]
             if len(trimmed_rows) < amount:
                 delta = amount - len(trimmed_rows)
-                color = trimmed_rows[-1].get_color()
-                fill = lstr(" ", color)
+                style = trimmed_rows[-1].style_at(0) or Style()
+                fill = lstr(" ", style)
                 trimmed_rows += [fill] * delta
             return LilyBlock(trimmed_rows)
 
@@ -211,18 +215,10 @@ class LilyBlock(LilyBase):
         lily = lstr(self._endl)
         return lily.join(self._copy_rows())
 
-    def color(self, color_str):
-        rows = self._copy_rows()
-
-        def color_func(s):
-            return s.color(color_str)
-
-        return LilyBlock(map(color_func, rows))
-
-    def color_regex(self, pattern, color_str="", flags=0, num=0):
+    def style_regex(self, pattern, style_str=None, flags=0, num=0):
         lily = self.to_lilystring()
-        colored = lily.color_regex(pattern, color_str, flags, num)
-        return LilyBlock(colored)
+        styled = lily.style_regex(pattern, style_str, flags, num)
+        return LilyBlock(styled)
 
     def _map_rebuild(self, func):
         rows = self._copy_rows()

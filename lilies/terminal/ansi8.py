@@ -1,20 +1,20 @@
-from .base import DefaultTerminal
+from .nocolor import NoColorTerminal
 from . import ansicodes
 from .exceptions import UnsupportedColorException
-from ..style.colors import get, Color
-from ..style.styles import Style
+from ..style import Color, Style
+from ..style.palette import get_color
 
-BLACK = get("black")
-RED = get("maroon")
-GREEN = get("green")
-YELLOW = get("olive")
-BLUE = get("navy")
-PURPLE = get("purple")
-CYAN = get("teal")
-GRAY = get("silver")
+BLACK = get_color("black")
+RED = get_color("maroon")
+GREEN = get_color("green")
+YELLOW = get_color("olive")
+BLUE = get_color("navy")
+PURPLE = get_color("purple")
+CYAN = get_color("teal")
+GRAY = get_color("silver")
 
 
-class Ansi8Terminal(DefaultTerminal):
+class Ansi8Terminal(NoColorTerminal):
     """
     An 8-color ansi terminal
     """
@@ -32,6 +32,23 @@ class Ansi8Terminal(DefaultTerminal):
             GRAY,
         ]
         self.supported_attrs = []
+        self.fg_colormap = {
+            None: [],
+            Color(): [ansicodes.NOCOLOR],
+            BLACK: [ansicodes.BLACK],
+            RED: [ansicodes.RED],
+            GREEN: [ansicodes.GREEN],
+            YELLOW: [ansicodes.YELLOW],
+            BLUE: [ansicodes.BLUE],
+            PURPLE: [ansicodes.MAGENTA],
+            CYAN: [ansicodes.CYAN],
+            GRAY: [ansicodes.LIGHTGRAY],
+        }
+        self.bg_colormap = {}
+        for key in self.fg_colormap:
+            val = self.fg_colormap[key]
+            bgcodes = map(ansicodes.fg_to_bg, val)
+            self.bg_colormap[key] = bgcodes
 
     def configure_style(self, style):
         """
@@ -40,11 +57,11 @@ class Ansi8Terminal(DefaultTerminal):
         if style.fg.isreset():
             fg = Color()
         else:
-            fg = self._hsl_to_color(*style.fg.hsl)
+            fg = self._hsl_to_8color(*style.fg.hsl)
         if style.bg.isreset():
             bg = Color()
         else:
-            bg = self._hsl_to_color(*style.bg.hsl)
+            bg = self._hsl_to_8color(*style.bg.hsl)
 
         def issupported(style):
             return style in self.supported_attrs
@@ -52,49 +69,19 @@ class Ansi8Terminal(DefaultTerminal):
         attrs = filter(issupported, style.attrs)
         return Style(fg, bg, attrs)
 
-    def encode_sequence(self, style_diff):
-        self.assert_compatible_stylediff(style_diff)
-        fg_code = self._fg_code(style_diff.fg)
-        bg_code = self._bg_code(style_diff.bg)
-        attr_code = self._attr_code(style_diff.attrs)
-        fg_char = ansicodes.esc(fg_code)
-        bg_char = ansicodes.esc(bg_code)
-        attr_char = ansicodes.esc(attr_code)
-        return attr_char + fg_char + bg_char
-
-    def _fg_code(self, fg_color):
-        if fg_color is None:
-            return None
-
-        if fg_color.isreset():
-            return ansicodes.NOCOLOR
-
-        if fg_color == BLACK:
-            return ansicodes.BLACK
-        elif fg_color == RED:
-            return ansicodes.RED
-        elif fg_color == GREEN:
-            return ansicodes.GREEN
-        elif fg_color == YELLOW:
-            return ansicodes.YELLOW
-        elif fg_color == BLUE:
-            return ansicodes.BLUE
-        elif fg_color == PURPLE:
-            return ansicodes.MAGENTA
-        elif fg_color == CYAN:
-            return ansicodes.CYAN
-        elif fg_color == GRAY:
-            return ansicodes.LIGHTGRAY
-        else:
+    def _build_fg_codes(self, fg_color):
+        ansi = self.fg_colormap.get(fg_color)
+        if ansi is None:
             raise UnsupportedColorException()
+        return ansi
 
-    def _bg_code(self, bg_color):
-        return ansicodes.fg_to_bg(self._fg_code(bg_color))
+    def _build_bg_codes(self, bg_color):
+        return map(ansicodes.fg_to_bg, self._build_fg_codes(bg_color))
 
-    def _attr_code(self, attrs):
-        return None
+    def _build_attr_codes(self, attrs):
+        return []
 
-    def _hsl_to_color(self, h, s, l):
+    def _hsl_to_8color(self, h, s, l):
         # grayscale, low saturation
         if s < 10:
             return BLACK if l < 20 else GRAY
@@ -111,3 +98,30 @@ class Ansi8Terminal(DefaultTerminal):
         if h < 260:
             return BLUE
         return PURPLE
+
+    def _build_reset_sequence(self):
+        return [ansicodes.esc(0)]
+
+    def test(self):
+        # remove the first "No color" color
+        colors = self.supported_colors[1:]
+        swatches = [
+            ["" for x in range(len(colors))] for y in range(len(colors))
+        ]
+
+        for i in range(len(colors)):
+            for j in range(len(colors)):
+                style = Style(fg=colors[i], bg=colors[j])
+                diff = style.diff(Style())
+                reset_diff = Style().diff(style)
+                color = self.encode_sequence(diff)
+                reset = self.encode_sequence(reset_diff)
+                swatches[i][j] = "{clr} A {reset}".format(
+                    clr=color, reset=reset
+                )
+
+        text_rows = ["~Lilies~", "Terminal test: ANSI 8 Colors", ""]
+        text_rows.append("Color table:")
+        color_rows = map(lambda rowlist: "".join(rowlist), swatches)
+
+        print("\n".join(text_rows + list(color_rows)))

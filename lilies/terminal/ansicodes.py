@@ -71,6 +71,24 @@ BRIGHTCYAN = 96
 WHITE = 97
 
 
+ATTR_ON_CODES = {
+    "bold": BOLD,
+    "dim": DIM,
+    "italic": ITALIC,
+    "underline": UNDERLINE,
+    "blink": BLINK,
+}
+
+
+ATTR_OFF_CODES = {
+    "bold": NOBOLDDIM,
+    "dim": NOBOLDDIM,
+    "italic": NOITALIC,
+    "underline": NOUNDERLINE,
+    "blink": NOBLINK,
+}
+
+
 def fg_to_bg(ansi):
     if ansi is None:
         return None

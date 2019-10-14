@@ -11,6 +11,7 @@ from lilies.lilystring import (
     InvalidInputError,
     LilyStringPiece,
 )
+from lilies.style.parse import InvalidStyleError, parse_style
 
 
 class TestLilyString(unittest.TestCase):
@@ -78,6 +79,16 @@ class TestLilyString(unittest.TestCase):
                 )
                 self.assertEqual(i, int(multicolor))
 
+    def test_grow_with_no_style_doesnt_change_color(self):
+        redstr = grow("hi", "red")
+        self.assertEqual(redstr, grow(redstr))
+
+    def test_grow_with_style_changes_color(self):
+        redstr = grow("hi", "red")
+        bluestr = grow(redstr, "blue")
+        self.assertNotEqual(redstr, bluestr)
+        self.assertTrue(grow("hi", "blue") in bluestr)
+
     def test_float_casting(self):
         for i in self.floats:
             # python reduces float precision on string casting.
@@ -138,8 +149,6 @@ class TestLilyString(unittest.TestCase):
                 self.assertEqual(original, wilt(both))
                 self.assertEqual(original, wilt(right))
                 self.assertEqual(original, wilt(left))
-
-                self.assertEqual(str(ps1) + str(ps2), str(both))
 
     def test_multiplication(self):
         for s in self.strings:
@@ -243,28 +252,29 @@ class TestLilyString(unittest.TestCase):
             p_one.resize(40, justify="garbage")
 
         # test garbage left fill color throws error
-        with self.assertRaises(KeyError):
-            p_one.resize(40, justify="center", l_fill_clr="garbage")
+        with self.assertRaises(InvalidStyleError):
+            p_one.resize(40, justify="center", l_fill_styl="garbage")
 
         # test garbage right fill color throws error
-        with self.assertRaises(KeyError):
-            p_one.resize(40, justify="center", r_fill_clr="garbage")
+        with self.assertRaises(InvalidStyleError):
+            p_one.resize(40, justify="center", r_fill_styl="garbage")
 
         # test garbage elipsis color throws error
-        with self.assertRaises(KeyError):
-            p_one.resize(10, elipsis_clr="garbage", add_elipsis=True)
+        with self.assertRaises(InvalidStyleError):
+            p_one.resize(10, elipsis_styl="garbage", add_elipsis=True)
 
         # test making too short causes error
         with self.assertRaises(LilyStringError):
             p_one.resize(1, add_elipsis=True)
 
     def test_iter(self):
+        red = parse_style("red")
         for s in self.strings:
             p = grow(s, "red")
             index = 0
             for ch in p:
                 self.assertEqual(s[index], wilt(ch))
-                self.assertEqual("red", ch.get_color())
+                self.assertEqual(red, ch.style_at(0))
                 index += 1
 
     def test_slicing(self):
@@ -317,15 +327,6 @@ class TestLilyString(unittest.TestCase):
             p = grow(s, "red")
             self.assertEqual(s.swapcase(), wilt(p.swapcase()))
 
-    def test_get_set_color(self):
-        for s in self.strings:
-            p = grow(s)
-            for c in self.colors:
-                if len(s) > 0 and not c == "":
-                    self.assertEqual(c, p.color(c).get_color())
-                else:
-                    self.assertEqual("default", p.color(c).get_color())
-
     def test_flatten_combines_empty_strings(self):
         s = grow("", "red")
         s._pieces.append(LilyStringPiece("", "blue"))
@@ -336,8 +337,8 @@ class TestLilyString(unittest.TestCase):
 
     def test_flatten_combines_colors(self):
         s = grow("hello", "blue")
-        s._append("world", "blue")
-        s._append("!", "blue")
+        s._append("world", parse_style("blue"))
+        s._append("!", parse_style("blue"))
         self.assertEqual(3, len(s._pieces))
         len_before = len(s)
         s._flatten()
@@ -346,8 +347,8 @@ class TestLilyString(unittest.TestCase):
 
     def test_flatten_does_not_combine_unlike_colors(self):
         s = grow("hello", "green")
-        s._append("world", "blue")
-        s._append("!", "green")
+        s._append("world", parse_style("blue"))
+        s._append("!", parse_style("green"))
         self.assertEqual(3, len(s._pieces))
         len_before = len(s)
         s._flatten()
