@@ -30,6 +30,6 @@ setup(
     license="MIT",
     author="Matt Zychowski",
     author_email="mrz2004@gmail.com",
-    packages=["lilies", "lilies.style", "lilies.terminal"],
+    packages=["lilies", "lilies.style", "lilies.terminal", "lilies.compiler"],
     install_requires=["colorama", "future"],
 )
