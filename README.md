@@ -16,18 +16,10 @@ There are [many options](https://stackoverflow.com/questions/287871/how-to-print
 In addition to a very simple API, Lilies provides colored strings and associated tools that work very similarly to Python strings. Strings can be indexed, sliced, added, multiplied, and `len()`ed seamlessly, as if their colors were not even there. Lilies also contains tools to arrange your strings in your terminal to create neat columns, sort your output, and arrange sections of text on the screen.
 
 ## Getting started
-For now, Lilies is working on PyPI/pip integration, which is not yet stable. Lilies is still in alpha and working on some cleanup and new features. To install the latest master on your native python:
+Install us via [pip](https://pypi.org/project/lilies/)!
 ```
-git clone https://github.com/mrz1988/lilies.git
-easy_install ./lilies
+pip install lilies
 ```
-
-It's also common to have a python 3.7 (or similar) install on your machine. If you've installed `python3` via homebrew, give this a go:
-```
-git clone https://github.com/mrz1988/lilies.git
-easy_install-3.7 ./lilies
-```
-Alternatively, you may need to do some digging to find what your python install has done with your setuptools to install it.
 
 ## Contributing
 You can find information about contributing [here](https://github.com/mrz1988/lilies/blob/master/docs/contributing.rst)
