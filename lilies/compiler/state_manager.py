@@ -1,4 +1,9 @@
-from ..terminal import detect_terminal, Ansi256Terminal, NoColorTerminal
+from ..terminal import (
+    detect_terminal,
+    TrueColorTerminal,
+    NoColorTerminal,
+    WinLegacy,
+)
 from .compiler import LilyStringCompiler
 
 
@@ -62,5 +67,6 @@ class CustomTerminal(object):
 _sm = StateManager()
 
 
-compile_all = CustomTerminal(Ansi256Terminal())
+compile_all = CustomTerminal(TrueColorTerminal())
 nocolor = CustomTerminal(NoColorTerminal())
+colorama = CustomTerminal(WinLegacy())

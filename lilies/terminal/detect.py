@@ -45,6 +45,22 @@ TERM_CLASSES = {
 _term = None
 
 
+class SystemProperties(object):
+    def __init__(
+        self,
+        pltform="",
+        env={},
+        stdout=None,
+        version=["0", "0", "0"],
+        tput_colors=None,
+    ):
+        self.platform = pltform
+        self.env = env
+        self.stdout = stdout
+        self.ver = version
+        self.tput_colors = tput_colors
+
+
 def detect_terminal():
     global _term
     if _term is not None:
@@ -73,24 +89,19 @@ def _get_system():
     return SystemProperties(plat, env, stdout, version, tput_colors)
 
 
-class SystemProperties(object):
-    def __init__(
-        self,
-        pltform="",
-        env={},
-        stdout=None,
-        version=["0", "0", "0"],
-        tput_colors=None,
-    ):
-        self.platform = pltform
-        self.env = env
-        self.stdout = stdout
-        self.ver = version
-        self.tput_colors = tput_colors
+def print_features(system=_get_system()):
+    print("Platform: {}".format(system.platform))
+    print("Version: {}".format(system.ver))
+    print("isatty: {}".format(system.stdout.isatty()))
+    print("NOCOLOR: {}".format(system.env.get("NO_COLOR") is not None))
+    print("TERM: {}".format(system.env.get("TERM")))
+    print("TERM_PROGRAM: {}".format(system.env.get("TERM_PROGRAM")))
+    print("COLORTERM: {}".format(system.env.get("COLORTERM")))
+    print("TPut Colors: {}".format(system.tput_colors))
 
 
 def _detect(system=_get_system()):
-    if not system.stdout.isatty():
+    if not system.stdout.isatty() or system.env.get("NO_COLOR") is not None:
         return NO_COLOR
 
     # Check colorterm env for modern
@@ -109,13 +120,16 @@ def _detect(system=_get_system()):
         if termprogram in {"Apple_Terminal"}:
             return ANSI256
 
+    if "CYGWIN" in system.platform:
+        return _get_cygwin_color(system)
+
     term = system.env.get("TERM")
     if term:
         if "screen-256" in term or "xterm-256" in term:
             return ANSI256
         if "vt100" in term:
             return ANSI16
-        if term in {"screen", "xterm", "color", "ansi", "cygwin", "linux"}:
+        if term in {"screen", "xterm", "color", "ansi", "linux"}:
             return ANSI8_OPEN
 
     if "Windows" in system.platform:
@@ -136,8 +150,30 @@ def _detect(system=_get_system()):
     return ANSI8
 
 
+def _get_cygwin_color(system):
+    # Cygwin takes over the system platform variable.
+    # It's hard to determine the exact version that
+    # 24-bit color was introduced, but anyone with a
+    # version older than 2.9 should update...
+    try:
+        version_major = int(system.ver[0])
+        version_minor = int(system.ver[1])
+        if version_major >= 3:
+            return FULL_RGB
+        if version_major == 2 and version_minor >= 9:
+            return FULL_RGB
+    except Exception:
+        pass
+    return AIXTERM
+
+
 def _get_windows_color(system):
-    # TODO: detect cygwin/conemu?
+    term = system.env.get("TERM")
+    mingw = system.env.get("MINGW64")
+
+    # detects git bash, which needs colorama.
+    if term and "cygwin" in term and mingw and "MSYSTEM" in mingw:
+        return WIN32
 
     release = system.ver
     if release[0] == "10":

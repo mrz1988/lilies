@@ -19,7 +19,12 @@ class MockStdout(object):
         return self.istty
 
 
-MOCK_NOCOLOR_TERM = SystemProperties(stdout=MockStdout(False))
+MOCK_NOCOLOR_TERM = SystemProperties(
+    stdout=MockStdout(True), env={"NO_COLOR": "TRUE"}
+)
+
+
+MOCK_NOTTY = SystemProperties(stdout=MockStdout(False))
 
 
 MOCK_TRUECOLOR_TERM = SystemProperties(
@@ -66,6 +71,37 @@ MOCK_VT100 = SystemProperties(env={"TERM": "vt100"}, stdout=MockStdout())
 
 
 MOCK_SIMPLE = SystemProperties(env={"TERM": "xterm"}, stdout=MockStdout())
+
+
+MOCK_WINDOWS10_256 = SystemProperties(
+    pltform="Windows", stdout=MockStdout(), version=["10", "0", "10600"]
+)
+
+
+MOCK_WINDOWS10_24BIT = SystemProperties(
+    pltform="Windows", stdout=MockStdout(), version=["10", "0", "15000"]
+)
+
+
+MOCK_CYGWIN_NEW = SystemProperties(
+    pltform="CYGWIN_NT-10.0-15000",
+    stdout=MockStdout(),
+    version=["3", "0", "7-338", "x86_64"],
+)
+
+
+MOCK_CYGWIN_OLD = SystemProperties(
+    pltform="CYGWIN_NT-10.0-15000",
+    stdout=MockStdout(),
+    version=["2", "0", "7-338", "x86_64"],
+)
+
+
+MOCK_GIT_BASH = SystemProperties(
+    env={"TERM": "cygwin", "MINGW64": "MSYSTEM"},
+    pltform="Windows",
+    stdout=MockStdout(),
+)
 
 
 MOCK_WINDOWS = SystemProperties(pltform="Windows", stdout=MockStdout())
