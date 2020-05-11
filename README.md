@@ -16,9 +16,6 @@ There are [many options](https://stackoverflow.com/questions/287871/how-to-print
 
 Lilies provides more powerful string tools, 2D text manipulation, and comfort that your coloring will respect the wishes of others' terminals.
 
-## Description
-In addition to a very simple API, Lilies provides colored strings and associated tools that work very similarly to Python strings. Strings can be indexed, sliced, added, multiplied, and `len()`ed seamlessly, as if their colors were not even there. Lilies also contains tools to arrange your strings in your terminal to create neat columns, sort your output, and arrange sections of text on the screen. More functionality is being added!
-
 ## Getting started
 Install us via [pip](https://pypi.org/project/lilies/)!
 ```
